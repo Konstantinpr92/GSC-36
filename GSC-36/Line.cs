@@ -80,6 +80,16 @@ namespace GSC_36
             }
         }
 
+        public override List<Point> getxl()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<Point> getxr()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Move(int dx, int dy)
         {
             int n = VertexList.Count() - 1;

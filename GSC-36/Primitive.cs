@@ -25,6 +25,8 @@ namespace GSC_36
         abstract public void ReflectVertical(int dx);
         abstract public void ReflectCentral(int dx, int dy);
         abstract public void Rotate(double ang);
+        abstract public List<Point> getxl();
+        abstract public List<Point> getxr();
 
     }
 }

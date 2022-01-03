@@ -9,6 +9,9 @@ namespace GSC_36
 {
     class Ugl3 : Primitive
     {
+        List<Point> Xl = new List<Point>();
+        List<Point> Xr = new List<Point>();
+
         Color ColorUgl = Color.Black;
         int edge = 0;
         public Ugl3(Color c, int a)
@@ -24,6 +27,8 @@ namespace GSC_36
         }
         public override void Fill(Graphics g, Pen DPen)
         {
+            Xr.Clear();
+            Xl.Clear();
             Pen DrawPen = new Pen(ColorUgl,1);
                 // преобразование координат в int
                 List<Point> PointL = new List<Point>();
@@ -65,10 +70,22 @@ namespace GSC_36
                         P2.X = Xb[i + 1]; P2.Y = Y;
 
                         g.DrawLine(DrawPen, P1, P2);
-                    }
+                    Xl.Add(P1);
+                    Xr.Add(P2);
+                }
                 }
                 PointL.Clear();
             
+        }
+
+        public override List<Point> getxl()
+        {
+            return Xl;
+        }
+
+        public override List<Point> getxr()
+        {
+            return Xr;
         }
 
         public override void Move(int dx, int dy)

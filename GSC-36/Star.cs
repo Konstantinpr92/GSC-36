@@ -11,6 +11,8 @@ namespace GSC_36
 
     public class Star : Primitive
     {
+       
+      
         int N = 5;
         int r = 60;
         Color ColorStar = Color.Black;
@@ -18,10 +20,14 @@ namespace GSC_36
         double y0;
         PointF[] points;
         int countFfill = 0;
-
+        List<Point> Xl = new List<Point>();
+        List<Point> Xr = new List<Point>();
 
         public Star(Color C, int N, int R)
         {
+            Xl = new List<Point>();
+            Xr = new List<Point>();
+
             ColorStar = C;
             this.N = N;
             r = R;
@@ -33,8 +39,13 @@ namespace GSC_36
         }
 
 
+
+     
+
         public override void Fill(Graphics g, Pen DPen)
         {
+            Xr.Clear();
+            Xl.Clear();
             Pen DrawPen = new Pen(ColorStar, 1);
             int nV = N;               // число вершин
             double R = r/2.0;   // радиус внутренний
@@ -98,6 +109,8 @@ namespace GSC_36
                     P2.X = Xb[i + 1]; P2.Y = Y;
 
                     g.DrawLine(DrawPen, P1, P2);
+                    Xl.Add(P1);
+                    Xr.Add(P2);
                 }
             }
             PointL.Clear();
@@ -169,12 +182,7 @@ namespace GSC_36
             
                 x0  -= dx;
 
-
-
                 x0 = -x0;
-
-
-
 
                 x0 += dx;
 
@@ -261,6 +269,16 @@ namespace GSC_36
             }
             PointL.Clear();
             return check;
+        }
+
+        public override List<Point> getxl()
+        {
+            return Xl;
+        }
+
+        public override List<Point> getxr()
+        {
+            return Xr;
         }
     }
 }
