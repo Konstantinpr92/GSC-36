@@ -9,7 +9,6 @@ namespace GSC_36
 {
    public class Ercurve : Primitive
     {
-
         int WCurve = 2;
         Color ColorCurve = Color.Black;
 
