@@ -47,8 +47,10 @@ namespace GSC_36
             this.настройкаКривойToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.настройкаУголкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.настройкаЗвездыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.HelpStatus = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.обьединениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.разностьАВToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.отчиститьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,28 +115,28 @@ namespace GSC_36
             // прямаяToolStripMenuItem
             // 
             this.прямаяToolStripMenuItem.Name = "прямаяToolStripMenuItem";
-            this.прямаяToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.прямаяToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.прямаяToolStripMenuItem.Text = "Прямая";
             this.прямаяToolStripMenuItem.Click += new System.EventHandler(this.прямаяToolStripMenuItem_Click);
             // 
             // криваяЭрмитаToolStripMenuItem
             // 
             this.криваяЭрмитаToolStripMenuItem.Name = "криваяЭрмитаToolStripMenuItem";
-            this.криваяЭрмитаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.криваяЭрмитаToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.криваяЭрмитаToolStripMenuItem.Text = "Кривая Эрмита";
             this.криваяЭрмитаToolStripMenuItem.Click += new System.EventHandler(this.криваяЭрмитаToolStripMenuItem_Click);
             // 
             // уголок3ToolStripMenuItem
             // 
             this.уголок3ToolStripMenuItem.Name = "уголок3ToolStripMenuItem";
-            this.уголок3ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.уголок3ToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.уголок3ToolStripMenuItem.Text = "Уголок 3";
             this.уголок3ToolStripMenuItem.Click += new System.EventHandler(this.уголок3ToolStripMenuItem_Click);
             // 
             // звездаToolStripMenuItem1
             // 
             this.звездаToolStripMenuItem1.Name = "звездаToolStripMenuItem1";
-            this.звездаToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.звездаToolStripMenuItem1.Size = new System.Drawing.Size(157, 22);
             this.звездаToolStripMenuItem1.Text = "Звезда";
             this.звездаToolStripMenuItem1.Click += new System.EventHandler(this.звездаToolStripMenuItem1_Click);
             // 
@@ -187,11 +189,13 @@ namespace GSC_36
             // 
             // toolStripMenuItem1
             // 
+            this.toolStripMenuItem1.CheckOnClick = true;
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.настройкаПрямойToolStripMenuItem,
             this.настройкаКривойToolStripMenuItem,
             this.настройкаУголкаToolStripMenuItem,
-            this.настройкаЗвездыToolStripMenuItem});
+            this.настройкаЗвездыToolStripMenuItem,
+            this.HelpStatus});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(78, 20);
             this.toolStripMenuItem1.Text = "Настройка";
@@ -199,35 +203,46 @@ namespace GSC_36
             // настройкаПрямойToolStripMenuItem
             // 
             this.настройкаПрямойToolStripMenuItem.Name = "настройкаПрямойToolStripMenuItem";
-            this.настройкаПрямойToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.настройкаПрямойToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.настройкаПрямойToolStripMenuItem.Text = "Настройка прямой";
             this.настройкаПрямойToolStripMenuItem.Click += new System.EventHandler(this.настройкаПрямойToolStripMenuItem_Click);
             // 
             // настройкаКривойToolStripMenuItem
             // 
             this.настройкаКривойToolStripMenuItem.Name = "настройкаКривойToolStripMenuItem";
-            this.настройкаКривойToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.настройкаКривойToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.настройкаКривойToolStripMenuItem.Text = "Настройка кривой";
             this.настройкаКривойToolStripMenuItem.Click += new System.EventHandler(this.настройкаКривойToolStripMenuItem_Click);
             // 
             // настройкаУголкаToolStripMenuItem
             // 
             this.настройкаУголкаToolStripMenuItem.Name = "настройкаУголкаToolStripMenuItem";
-            this.настройкаУголкаToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.настройкаУголкаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.настройкаУголкаToolStripMenuItem.Text = "Настройка уголка";
             this.настройкаУголкаToolStripMenuItem.Click += new System.EventHandler(this.настройкаУголкаToolStripMenuItem_Click);
             // 
             // настройкаЗвездыToolStripMenuItem
             // 
             this.настройкаЗвездыToolStripMenuItem.Name = "настройкаЗвездыToolStripMenuItem";
-            this.настройкаЗвездыToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.настройкаЗвездыToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.настройкаЗвездыToolStripMenuItem.Text = "Настройка звезды";
             this.настройкаЗвездыToolStripMenuItem.Click += new System.EventHandler(this.настройкаЗвездыToolStripMenuItem_Click);
+            // 
+            // HelpStatus
+            // 
+            this.HelpStatus.Checked = true;
+            this.HelpStatus.CheckOnClick = true;
+            this.HelpStatus.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.HelpStatus.Name = "HelpStatus";
+            this.HelpStatus.Size = new System.Drawing.Size(180, 22);
+            this.HelpStatus.Text = "Подсказки";
+            this.HelpStatus.Click += new System.EventHandler(this.подсказкиToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.обьединениеToolStripMenuItem});
+            this.обьединениеToolStripMenuItem,
+            this.разностьАВToolStripMenuItem});
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             this.toolStripMenuItem3.Size = new System.Drawing.Size(45, 20);
             this.toolStripMenuItem3.Text = "ТМО";
@@ -235,9 +250,16 @@ namespace GSC_36
             // обьединениеToolStripMenuItem
             // 
             this.обьединениеToolStripMenuItem.Name = "обьединениеToolStripMenuItem";
-            this.обьединениеToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.обьединениеToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.обьединениеToolStripMenuItem.Text = "Обьединение";
             this.обьединениеToolStripMenuItem.Click += new System.EventHandler(this.обьединениеToolStripMenuItem_Click);
+            // 
+            // разностьАВToolStripMenuItem
+            // 
+            this.разностьАВToolStripMenuItem.Name = "разностьАВToolStripMenuItem";
+            this.разностьАВToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.разностьАВToolStripMenuItem.Text = "Разность А\\В";
+            this.разностьАВToolStripMenuItem.Click += new System.EventHandler(this.разностьАВToolStripMenuItem_Click);
             // 
             // отчиститьToolStripMenuItem
             // 
@@ -515,6 +537,8 @@ namespace GSC_36
         private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem обьединениеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem разностьАВToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem HelpStatus;
     }
 }
 

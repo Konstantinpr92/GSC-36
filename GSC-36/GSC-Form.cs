@@ -58,6 +58,8 @@ namespace GSC_36
         const int Delete = 9;
         const int TMOUnite = 10;
         const int TMOUniteStage2 = 110;
+        const int TMORazn = 11;
+        const int TMORaznStage2 = 111;
 
         int OperationType = 0;
 
@@ -84,20 +86,28 @@ namespace GSC_36
         private void прямаяToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OperationType = 0;
+            if (HelpStatus.Checked)
+            MessageBox.Show("Выберите левой кнопкой две точки. ");
         }
 
         private void криваяЭрмитаToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Для рисования кривой Эрмита - укажите 4 точки.\nПервые две - для первого вектра, другие две - для второго вектора. ");
             OperationType = DrawCurve;
         }
 
         private void уголок3ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Выберите левой кнопкой точку.");
             OperationType = DrawUgl3;
         }
 
         private void звездаToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Выберите левой кнопкой точку - центр звезды. ");
             OperationType = DrawStar;
         }
 
@@ -336,7 +346,6 @@ namespace GSC_36
                                         p.Fill(g, DrawPen);
                                     }
 
-
                                 }
                                 else
                                 {
@@ -350,11 +359,7 @@ namespace GSC_36
 
                             }
 
-
                         }
-
-
-
 
 
                         else checkPgn = false;
@@ -384,18 +389,44 @@ namespace GSC_36
                     if (checkPgn)
                     {
                         OperationType = TMOUniteStage2;
-                        MessageBox.Show("Выберите фигуру 2");
+                        MessageBox.Show("Попытка выполнить операцию A U B. Выберите фигуру B.");
 
                     }
 
                     break;
 
+                case TMORazn:
+                    selectorForTMO1 = 0;
+
+                    for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
+                    {
+
+                        if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
+                        {
+                            selectorForTMO1 = pgnn;
+                            g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
+                            checkPgn = true;
+                            // MessageBox.Show("Выбрана для удаления фигура номер " + selector.ToString());
+                            break;
+
+                        }
+                        else checkPgn = false;
+
+                    };
+                    if (checkPgn)
+                    {
+                        OperationType = TMORaznStage2;
+                        MessageBox.Show("Попытка выполнить операцию A\\B. Выберите фигуру В.");
+
+                    }
+                    break;
 
                 case TMOUniteStage2:
                     for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
                     {
                         selectorForTMO2 = 0;
-
+                        if (pgnn == selectorForTMO1)
+                            continue;
                         if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
                         {
                             selectorForTMO2 = pgnn;
@@ -553,7 +584,169 @@ namespace GSC_36
                     }
 
                     break;
+                case TMORaznStage2:
+                    for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
+                    {
+                        selectorForTMO2 = 0;
+                        if (pgnn == selectorForTMO1)
+                            continue;
+                        if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
+                        {   
+                            selectorForTMO2 = pgnn;
+                            g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
+                            checkPgn = true;
+                            // MessageBox.Show("Выбрана для удаления фигура номер " + selector.ToString());
+                            break;
 
+                        }
+                        else checkPgn = false;
+
+                    };
+                    if (checkPgn)
+                    {
+                        List<Point> AllPoint = new List<Point>();
+                        for (int i = 0; i < PrimitiveList[selectorForTMO1].getxl().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO1].getxl()[i]);
+                        }
+                        for (int i = 0; i < PrimitiveList[selectorForTMO1].getxr().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO1].getxr()[i]);
+                        }
+                        for (int i = 0; i < PrimitiveList[selectorForTMO2].getxl().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO2].getxl()[i]);
+                        }
+                        for (int i = 0; i < PrimitiveList[selectorForTMO2].getxr().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO2].getxr()[i]);
+                        }
+
+                        AllPoint.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+
+                        //      List<ClassForTMOtest> M = new List<ClassForTMOtest>();
+                        //      List<Point> Xrl = new List<Point>();
+                        //      List<Point> Xrr = new List<Point>();
+                        List<Point> XrlForTMOResult = new List<Point>();
+                        List<Point> XrrForTMOResult = new List<Point>();
+                        for (int y = AllPoint[0].Y; y <= AllPoint[AllPoint.Count() - 1].Y; y++)
+                        {
+                            List<ClassForTMOtest> M = new List<ClassForTMOtest>();
+                            List<Point> Xrl = new List<Point>();
+                            List<Point> Xrr = new List<Point>();
+
+                            int n = PrimitiveList[selectorForTMO1].getxl().Count();
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO1].getxl()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO1].getxl()[i].X, y), 2));
+                            }
+
+                            int nM = n;
+                            n = PrimitiveList[selectorForTMO1].getxr().Count();
+
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO1].getxr()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO1].getxr()[i].X, y), -2));
+                            }
+
+                            nM = nM + n;
+                            n = PrimitiveList[selectorForTMO2].getxl().Count();
+
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO2].getxl()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO2].getxl()[i].X, y), 1));
+                            }
+                            nM = nM + n;
+                            n = PrimitiveList[selectorForTMO2].getxr().Count();
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO2].getxr()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO2].getxr()[i].X, y), -1));
+                            }
+
+                            nM = nM + n;
+
+                            M.Sort((a, b) => a.p.X.CompareTo(b.p.X));
+
+
+                            int k = 0; int m = 0; int Q = 0; int Qnew = 0;
+
+                            if (M[0].p.X <= 0 && M[0].Q < 0)//здесь опечатка?
+                            {
+                                Xrl.Add(new Point(0, M[0].p.Y));
+                                Q = -M[0].Q;
+                                k++;
+                            }
+                            for (int i = 0; i < M.Count; i++)
+                            {
+                                int x = M[i].p.X; Qnew = Q + M[i].Q;
+
+                                if (Q != 2  && Qnew == 2 )
+                                {
+                                    Xrl.Add(new Point(x, y)); k++;
+                                }
+                                if (Qnew != 2  && Q == 2 )
+                                {
+                                    Xrr.Add(new Point(x, y)); m++;
+                                }
+
+                                Q = Qnew;
+                            }
+
+                            //  Xrr.Sort((a, b) => a.Y.CompareTo(b.Y));
+                            //  Xrl.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+
+                            for (int i = 0; i < Xrr.Count; i++)
+                            {
+                                XrrForTMOResult.Add(new Point(Xrr[i].X, y));
+                                XrlForTMOResult.Add(new Point(Xrl[i].X, y));
+                                g.DrawLine(new Pen(Color.Cyan, 2), new Point(Xrl[i].X, y), new Point(Xrr[i].X, y));
+                            }
+                        }
+                        TMOResult newTmoResult = new TMOResult(XrlForTMOResult, XrrForTMOResult);
+
+                        List<Primitive> NewPrimitiveList = new List<Primitive>();
+                        for (int i = 0; i < PrimitiveList.Count; i++)
+                        {
+                            if (i == selectorForTMO1 || i == selectorForTMO2)
+                            {
+                                continue;
+                            }
+                            NewPrimitiveList.Add(PrimitiveList[i]);
+
+                        }
+                        PrimitiveList.Clear();
+                        foreach (var p in NewPrimitiveList)
+                        {
+                            PrimitiveList.Add(p);
+                        }
+                        NewPrimitiveList.Clear();
+                        PrimitiveList.Add(newTmoResult);
+                        PboMain.Image = myBitmap;
+                        g.Clear(Color.White);
+                        foreach (var p in PrimitiveList)
+                        {
+                            p.Fill(g, DrawPen);
+                        }
+                        checkPgn = false;
+
+                        //  Xrr.Sort((a, b) => a.Y.CompareTo(b.Y));
+                        //  Xrl.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+                        //    for (int i = 0; i < Xrr.Count ; i++)
+                        //    {
+                        //        g.DrawLine(new Pen(Color.Cyan, 2), Xrl[i], Xrr[i]);
+                        //    }
+
+
+                    }
+
+                    break;
                 case Delete:
                     selector = 0;
                     for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
@@ -807,11 +1000,15 @@ namespace GSC_36
 
         private void переместитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Выберите левой кнопкой фигуру и перемещайте, зажав левую кнопку.");
             OperationType = SelectAndMove;
         }
 
         private void отразитьОтноситьльноВертикальнойПрямойToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Выберите левой кнопкой фигуру, затем выбериете, относительно чего отразить фигуру.");
             OperationType = SelectAndReflectVertical;
         }
 
@@ -822,23 +1019,42 @@ namespace GSC_36
 
         private void отразитьЗеркальноОтносительноЗаданногоЦентраToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Выберите левой кнопкой фигуру, затем точку, относительно чего отразить.");
             OperationType = SelectAndReflectCentral;
         }
 
         private void повернутьНаГрадусовToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Выберите левой кнопкой фигуру, затем укажите градус поворота");
             OperationType = SelectAndRotate;
 
         }
 
         private void удалитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Выберите левой кнопкой фигуру для удаления");
             OperationType = Delete;
         }
 
         private void обьединениеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OperationType = TMOUnite;
+            MessageBox.Show("Попытка выполнить операцию A U B. Выберите фигуру А.");
+        }
+
+        private void разностьАВToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OperationType = TMORazn;
+            MessageBox.Show("Попытка выполнить операцию A\\B. Выберите фигуру А.");
+
+        }
+
+        private void подсказкиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
