@@ -79,7 +79,55 @@ namespace GSC_36
 
         public override void ReflectCentral(int dx, int dy)
         {
-            throw new NotImplementedException();
+            x0 -= dx;
+            y0 -= dy;
+
+
+
+            x0 = -x0;
+            y0 = -y0;
+
+
+
+
+            x0 += dx;
+            y0 += dy;
+
+
+            Point fP = new Point();
+            for (int i = 0; i < Xr.Count(); i++)
+            {
+                fP.Y = Xr[i].Y - dy; ;
+                fP.X = Xr[i].X - dx;
+                Xr[i] = fP;
+
+                fP.Y = Xl[i].Y - dy; ;
+                fP.X = Xl[i].X - dx;
+                Xl[i] = fP;
+            }
+
+            for (int i = 0; i < Xr.Count(); i++)
+            {
+                fP.Y = -Xr[i].Y;
+                fP.X = -Xr[i].X;
+                Xr[i] = fP;
+                fP.Y = -Xl[i].Y;
+                fP.X = -Xl[i].X;
+                Xl[i] = fP;
+            }
+
+            for (int i = 0; i < Xr.Count(); i++)
+            {
+                fP.Y = Xr[i].Y + dy;
+                fP.X = Xr[i].X + dx;
+                Xr[i] = fP;
+                fP.Y = Xl[i].Y + dy;
+                fP.X = Xl[i].X + dx;
+                Xl[i] = fP;
+            }
+            T = Xr;
+            Xr = Xl;
+            Xl = T;
         }
 
         public override void ReflectVertical(int dx)
@@ -129,8 +177,6 @@ namespace GSC_36
             T = Xr;
             Xr = Xl;
             Xl = T;
-
-
         }
 
         public override void Rotate(double ang)
@@ -188,7 +234,7 @@ namespace GSC_36
                         np.X = x;
                         np.Y = y;
                         AllPoints.Add(np);
-                       // g.DrawRectangle(DrawPen, x, y, 1, 1);
+                        // g.DrawRectangle(DrawPen, x, y, 1, 1);
                         if (x == (int)Xr[k].X) break;
                         Fx = F + dFx;
                         F = Fx - dFy;
