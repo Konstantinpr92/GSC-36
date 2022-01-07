@@ -11,8 +11,9 @@ namespace GSC_36
     {
         int WCurve = 2;
         Color ColorCurve = Color.Black;
-
-        List<Point> AllPoints = new List<Point>();
+        List<Point> Xl = new List<Point>();
+        List<Point> Xr = new List<Point>();
+        List<PointF> AllPoints = new List<PointF>();
 
         public Ercurve(Color c, int w)
         {
@@ -23,7 +24,12 @@ namespace GSC_36
 
         public override void Fill(Graphics g, Pen DPen)
         {
+            Xl.Clear();
+            Xr.Clear();
             AllPoints.Clear();
+
+
+
             Pen DrawPen = new Pen(ColorCurve, WCurve);
             double h0, h1, h2, h3;
             for (double t = 0; t <= 1; t += 0.0001)
@@ -38,10 +44,12 @@ namespace GSC_36
 
                 double pty = VertexList[0].Y * h0 + VertexList[2].Y * h1 + (VertexList[1].Y - VertexList[0].Y) * h2 + (VertexList[3].Y - VertexList[2].Y) * h3;
 
-                Point np = new Point(0, 0);
-                np.X = (int)ptx;
-                np.Y = (int)pty;
+                PointF np = new PointF(0, 0);
+                np.X = (float)ptx;
+                np.Y = (float)pty;
                 AllPoints.Add(np);
+                Xl.Add(new Point((int)ptx, (int)pty));
+                Xr.Add(new Point((int)ptx+5, (int)pty));
 
                 g.DrawRectangle(DrawPen, (float)ptx, (float)pty, 1, 1);
             }
@@ -49,12 +57,12 @@ namespace GSC_36
 
         public override List<Point> getxl()
         {
-            throw new NotImplementedException();
+            return Xl;
         }
 
         public override List<Point> getxr()
         {
-            throw new NotImplementedException();
+            return Xr;
         }
 
         public override void Move(int dx, int dy)
