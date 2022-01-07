@@ -9,8 +9,12 @@ namespace GSC_36
 {
     class Line : Primitive
     {
-        
-       public Boolean FirstPoint = true;
+        List<Point> Xl = new List<Point>();
+        List<Point> Xr = new List<Point>();
+
+        List<Point> auxilVertexLixtForTMO = new List<Point>(); 
+
+        public Boolean FirstPoint = true;
        int WLine = 2;
        Color ColorLine = Color.Black;
 
@@ -26,8 +30,19 @@ namespace GSC_36
             VertexList.Add(NewVertex);
         }
 
+
         public override void Fill(Graphics g, Pen DPen)
         {
+            int counterForPoints = 0;
+            Point AuxPoint1 = new Point();
+
+            Point AuxPoint2=  new Point();
+
+            Point AuxPoint3 = new Point();
+
+            Point AuxPoint4 = new Point();
+            auxilVertexLixtForTMO.Clear();
+
             AllPoints.Clear();
             Pen DrawPen = new Pen(ColorLine, WLine);
 
@@ -52,8 +67,32 @@ namespace GSC_36
                     np.X = x;
                     np.Y = y;
                     AllPoints.Add(np);
-                    g.DrawRectangle(DrawPen, x, y, 1,1);
-                    if (x == VertexList[1].X) break;
+                    
+                    if (counterForPoints == 0) { 
+                    AuxPoint1 = new Point(x, y + WLine / 2);
+                    AuxPoint2 = new Point(x, y - WLine / 2);
+                    counterForPoints++;
+                                    }
+
+
+                    g.DrawRectangle(DrawPen, x, y, 1, 1);
+
+                    /*              for (int i = 0; i < WLine; i++)
+
+                                  {
+                                      Xl.Add(new Point(x, y + i ));
+                                      Xl.Add(new Point(x, y - i ));
+                                      Xr.Add(new Point(x , y + i ));
+                                      Xr.Add(new Point(x, y - i ));
+                                  }*/
+
+
+                    if (x == VertexList[1].X) {
+                         AuxPoint4 = new Point(x, y + WLine / 2);
+                         AuxPoint3 = new Point(x, y - WLine / 2);
+
+                        break;
+                    };
                     Fx = F + dFx;
                     F = Fx - dFy;
                     x = x + Sx;
@@ -69,25 +108,93 @@ namespace GSC_36
                     np.X = x;
                     np.Y = y;
                     AllPoints.Add(np);
+                    if (counterForPoints == 0) 
+                    { 
+                    AuxPoint1 = new Point(x - WLine / 2, y);
+                    AuxPoint2 = new Point(x + WLine / 2, y);
+                        counterForPoints++;
+                }
                     g.DrawRectangle(DrawPen, x, y, 1, 1);
-                    if (y == VertexList[1].Y) break;
+
+                    /*                    Xl.Add(new Point(x - WLine, y));
+                                        Xr.Add(new Point(x + WLine, y));*/
+
+                    if (y == VertexList[1].Y) {
+                         AuxPoint4 = new Point(x - WLine / 2, y);
+                         AuxPoint3 = new Point(x + WLine / 2, y);
+
+                        break;
+                    }
                     Fy = F - dFy;
                     F = Fy + dFx;
                     y = y + Sy;
                     if (Math.Abs(Fy) < Math.Abs(F)) F = Fy;
                     else x = x + Sx;
                 } while (true);
+
+               
+
             }
+            auxilVertexLixtForTMO.Add(AuxPoint1);
+            auxilVertexLixtForTMO.Add(AuxPoint2);
+            auxilVertexLixtForTMO.Add(AuxPoint3);
+            auxilVertexLixtForTMO.Add(AuxPoint4);
+            Xr.Clear();
+            Xl.Clear();
+            // преобразование координат в int
+            List<Point> PointL = new List<Point>();
+            Point P1, P2;
+            P1 = new Point();
+            int n = auxilVertexLixtForTMO.Count() - 1, k = 0;
+            int Ymin = (int)(auxilVertexLixtForTMO[0].Y);
+            int Ymax = Ymin, Y = 0, X;
+            for (int i = 0; i <= n; i++)
+            {
+                P1.X = (int)(auxilVertexLixtForTMO[i].X);
+                P1.Y = (int)(auxilVertexLixtForTMO[i].Y);
+                PointL.Add(P1);
+                if (P1.Y < Ymin) Ymin = P1.Y;
+                if (P1.Y > Ymax) Ymax = P1.Y;
+            }
+
+            List<int> Xb = new List<int>();
+            double xx;
+            P1.X = 0; P1.Y = 0; P2 = P1;
+
+            for (Y = Ymin; Y <= Ymax; Y++)
+            {
+                Xb.Clear();
+                for (int i = 0; i <= n; i++)
+                {
+                    if (i < n) k = i + 1; else k = 0;
+                    if ((PointL[i].Y < Y) & (PointL[k].Y >= Y) | (PointL[i].Y >= Y) & (PointL[k].Y < Y))
+                    {
+                        xx = (Y - PointL[i].Y) * (PointL[k].X - PointL[i].X) / (PointL[k].Y - PointL[i].Y) + PointL[i].X;
+                        X = (int)Math.Round(xx);
+                        Xb.Add(X);
+                    }
+                }
+                Xb.Sort();  // по умолчанию по возрастанию
+                for (int i = 0; i < Xb.Count; i = i + 2)
+                {
+                    P1.X = Xb[i]; P1.Y = Y;
+                    P2.X = Xb[i + 1]; P2.Y = Y;
+                    Xl.Add(P1);
+                    Xr.Add(P2);
+                }
+            }
+            PointL.Clear();
+
         }
 
         public override List<Point> getxl()
         {
-            throw new NotImplementedException();
+            return Xl;
         }
 
         public override List<Point> getxr()
         {
-            throw new NotImplementedException();
+            return Xr;
         }
 
         public override void Move(int dx, int dy)
