@@ -48,8 +48,12 @@ namespace GSC_36
                 np.X = (float)ptx;
                 np.Y = (float)pty;
                 AllPoints.Add(np);
+
                 Xl.Add(new Point((int)ptx, (int)pty));
-                Xr.Add(new Point((int)ptx+5, (int)pty));
+                Xr.Add(new Point((int)ptx+2, (int)pty));
+
+                Xl = Xl.Distinct().ToList();
+                Xr = Xr.Distinct().ToList();
 
                 g.DrawRectangle(DrawPen, (float)ptx, (float)pty, 1, 1);
             }
