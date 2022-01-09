@@ -147,9 +147,9 @@ namespace GSC_36
             this.переместитьToolStripMenuItem,
             this.отразитьОтноситьльноВертикальнойПрямойToolStripMenuItem,
             this.отразитьЗеркальноОтносительноЗаданногоЦентраToolStripMenuItem,
+            this.повернутьМышкойToolStripMenuItem,
             this.повернутьНаГрадусовToolStripMenuItem,
-            this.удалитьToolStripMenuItem,
-            this.повернутьМышкойToolStripMenuItem});
+            this.удалитьToolStripMenuItem});
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(91, 20);
             this.toolStripMenuItem2.Text = "Выделить и...";

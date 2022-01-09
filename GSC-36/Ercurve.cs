@@ -9,6 +9,9 @@ namespace GSC_36
 {
    public class Ercurve : Primitive
     {
+        public double x0;
+        public double y0;
+
         int WCurve = 2;
         Color ColorCurve = Color.Black;
         List<Point> Xl = new List<Point>();
@@ -24,6 +27,7 @@ namespace GSC_36
 
         public override void Fill(Graphics g, Pen DPen)
         {
+           
             Xl.Clear();
             Xr.Clear();
             AllPoints.Clear();
@@ -44,7 +48,13 @@ namespace GSC_36
 
                 double pty = VertexList[0].Y * h0 + VertexList[2].Y * h1 + (VertexList[1].Y - VertexList[0].Y) * h2 + (VertexList[3].Y - VertexList[2].Y) * h3;
 
+                double difference = Math.Abs(t * .00001);
                 PointF np = new PointF(0, 0);
+                if (Math.Abs(t - 0.5) <= difference)
+                {
+                    x0 = ptx;
+                    y0 = pty;
+                }
                 np.X = (float)ptx;
                 np.Y = (float)pty;
                 AllPoints.Add(np);
@@ -135,8 +145,8 @@ namespace GSC_36
         public override void Rotate(double ang)
         {
             double rad = ang * (Math.PI / 180.0);
-            double x0 = (VertexList[0].X + VertexList[2].X) / 2.0;
-            double y0 = (VertexList[0].Y + VertexList[2].Y) / 2.0;
+         //   double x0 = (VertexList[0].X + VertexList[2].X) / 2.0;
+         //   double y0 = (VertexList[0].Y + VertexList[2].Y) / 2.0;
             for (int i = 0; i < VertexList.Count; i++)
             {
                 int dx = (int)Math.Round(VertexList[i].X - x0);
@@ -152,7 +162,19 @@ namespace GSC_36
 
         public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
         {
-            throw new NotImplementedException();
+            Point c = new Point((int)x0, (int)y0);
+            Point p0 = new Point((int)x1, (int)y1);
+            Point p1 = new Point((int)x2, (int)y2);
+            var p0c = Math.Sqrt(Math.Pow(c.X - p0.X, 2) +
+                    Math.Pow(c.Y - p0.Y, 2)); // p0->c (b)   
+            var p1c = Math.Sqrt(Math.Pow(c.X - p1.X, 2) +
+                                Math.Pow(c.Y - p1.Y, 2)); // p1->c (a)
+            var p0p1 = Math.Sqrt(Math.Pow(p1.X - p0.X, 2) +
+                                 Math.Pow(p1.Y - p0.Y, 2)); // p0->p1 (c)
+            double rad = Math.Acos((p1c * p1c + p0c * p0c - p0p1 * p0p1) / (2 * p1c * p0c));
+
+            double ang = rad / ((Math.PI / 180.0));
+            Rotate(ang);
         }
 
         public override bool ThisPgn(int mX, int mY)
