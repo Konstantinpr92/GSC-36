@@ -69,7 +69,7 @@ namespace GSC_36
         //текущая операция
         int OperationType = 0;
 
-        Graphics g;
+        public Graphics g;
         Pen DrawPen = new Pen(Color.Black, 2);
         Pen DrawPenForVecrors = new Pen(Color.Red, 1);
 
@@ -440,7 +440,6 @@ namespace GSC_36
 
                             PrimitiveList[selector].RotateMouse(g,Xstart,Ystart, e.X, e.Y);
                             g.Clear(PboMain.BackColor);
-
                             PrimitiveList[selector].Fill(g, DrawPen);
                             PboMain.Image = myBitmap;
                             foreach (var p in PrimitiveList)
