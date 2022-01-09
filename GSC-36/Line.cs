@@ -305,6 +305,7 @@ namespace GSC_36
 
         public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
         {
+            //  https://stackoverflow.com/questions/1211212/how-to-calculate-an-angle-from-three-points
 
             //ищем координаты центра
             double x0 = (VertexList[0].X + VertexList[1].X) / 2.0;

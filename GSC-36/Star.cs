@@ -277,6 +277,7 @@ namespace GSC_36
 
         public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
         {
+
             Point c = new Point((int)x0, (int)y0);
             Point p0 = new Point((int)x1, (int)y1);
             Point p1 = new Point((int)x2, (int)y2);
