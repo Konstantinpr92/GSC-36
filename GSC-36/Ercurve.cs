@@ -150,6 +150,11 @@ namespace GSC_36
             }
         }
 
+        public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool ThisPgn(int mX, int mY)
         {
             bool check = false;

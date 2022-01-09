@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 namespace GSC_36
 {
 
-
     public class Star : Primitive
     {
-       
-      
         int N = 5;
         int r = 60;
         Color ColorStar = Color.Black;
@@ -38,10 +35,7 @@ namespace GSC_36
             VertexList.Add(NewVertex);
         }
 
-
-
-     
-
+        //https://www.cyberforum.ru/windows-forms/thread1112848.html
         public override void Fill(Graphics g, Pen DPen)
         {
             Xr.Clear();
@@ -279,6 +273,11 @@ namespace GSC_36
         public override List<Point> getxr()
         {
             return Xr;
+        }
+
+        public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
+        {
+            throw new NotImplementedException();
         }
     }
 }
