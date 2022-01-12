@@ -14,7 +14,7 @@ namespace GSC_36
 
         List<Point> auxilVertexLixtForTMO = new List<Point>(); 
 
-        public Boolean FirstPoint = true;
+       public Boolean FirstPoint = true;
        int WLine = 2;
        Color ColorLine = Color.Black;
 

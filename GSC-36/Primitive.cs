@@ -15,18 +15,13 @@ namespace GSC_36
         {
             VertexList = new List<PointF>();
         }
-
         abstract public void Fill(Graphics g, Pen DrawPen);
-
         abstract public bool ThisPgn(int mX, int mY);
-
-       abstract public void Move(int dx, int dy);
-
+        abstract public void Move(int dx, int dy);
         abstract public void ReflectVertical(int dx);
         abstract public void ReflectCentral(int dx, int dy);
         abstract public void Rotate(double ang);
         abstract public List<Point> getxl();
         abstract public List<Point> getxr();
-
     }
 }

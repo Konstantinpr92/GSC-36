@@ -102,9 +102,6 @@ namespace GSC_36
 
         public override void ReflectCentral(int dx, int dy)
         {
-
-
-
             PointF fP = new PointF();
             for (int i = 0; i < VertexList.Count(); i++)
             {
