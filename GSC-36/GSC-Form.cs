@@ -818,7 +818,6 @@ namespace GSC_36
                             checkPgn = true;
                             // MessageBox.Show("Выбрана для удаления фигура номер " + selector.ToString());
                             break;
-
                         }
                         else checkPgn = false;
 
