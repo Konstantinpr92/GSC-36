@@ -13,13 +13,16 @@ namespace GSC_36
 {
     public partial class Form1 : Form
 
-    {
+    {   //переменные для хранения индекса фигур, над которыпи будет проводиться ТМО
         int selectorForTMO1 = 0;
         int selectorForTMO2 = 0;
+
         Bitmap myBitmap;
         Point PboMainMousePos = new Point();
 
         bool checkPgn = false;
+
+        //переменная для хранения индекса фигуры, над которыпи будет проводиться операция
         int selector = 0;
 
         //переменные для хранения настроек прямой
@@ -39,8 +42,8 @@ namespace GSC_36
         int WforUgl = 20;
         Color ColorUgl = Color.Black;
 
-
-
+        int Xstart = 0;
+        int Ystart = 0;
 
         // константы для переключения между режимами
         const int DrawLine = 0;
@@ -60,18 +63,22 @@ namespace GSC_36
         const int TMOUniteStage2 = 110;
         const int TMORazn = 11;
         const int TMORaznStage2 = 111;
+        const int RotateMouse = 12;
+        const int RotateMouseStage2 = 112;
 
+        //текущая операция
         int OperationType = 0;
 
-        Graphics g;
+        public Graphics g;
         Pen DrawPen = new Pen(Color.Black, 2);
         Pen DrawPenForVecrors = new Pen(Color.Red, 1);
 
+        // главный список фигур
         List<Primitive> PrimitiveList = new List<Primitive>();
-        
+
 
         public Form1()
-        {          
+        {
             InitializeComponent();
             g = PboMain.CreateGraphics();
             myBitmap = new Bitmap(PboMain.Width, PboMain.Height);
@@ -87,7 +94,7 @@ namespace GSC_36
         {
             OperationType = 0;
             if (HelpStatus.Checked)
-            MessageBox.Show("Выберите левой кнопкой две точки. ");
+                MessageBox.Show("Выберите левой кнопкой две точки. ");
         }
 
         private void криваяЭрмитаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -114,16 +121,17 @@ namespace GSC_36
         private void PboMain_MouseDown(object sender, MouseEventArgs e)
         {
             PboMainMousePos = e.Location;
+
             switch (OperationType)
             {
-                case 0:
+                case DrawLine:
                     PrimitiveList.Add(new Line(ColorLine, WLine));
                     g.DrawEllipse(new Pen(ColorLine, WLine), e.X, e.Y, 2, 2);
                     OperationType = DrawLineStage2;
                     PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
                     break;
-                case 100:
-                    g.DrawEllipse(new  Pen(ColorLine, WLine), e.X, e.Y, 2, 2);
+                case DrawLineStage2:
+                    g.DrawEllipse(new Pen(ColorLine, WLine), e.X, e.Y, 2, 2);
 
                     if (PrimitiveList[PrimitiveList.Count - 1].VertexList.Count == 1)
                     {
@@ -140,6 +148,7 @@ namespace GSC_36
                     PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
                     g.DrawEllipse(DrawPenForVecrors, e.X, e.Y, 2, 2);
                     break;
+
                 case DravCurveStage2:
                     if (PrimitiveList[PrimitiveList.Count - 1].VertexList.Count == 1)
                     {
@@ -162,6 +171,7 @@ namespace GSC_36
                     OperationType = DrawCurve;
                     PboMain.Image = myBitmap;
 
+                    //задержка для отображения вспомогательных линий
                     Task.Delay(2000).Wait();
                     g.Clear(Color.White);
                     foreach (var p in PrimitiveList)
@@ -175,33 +185,34 @@ namespace GSC_36
                 case DrawStar:
                     PrimitiveList.Add(new Star(ColorStar, nForStar, rForstar));
                     PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
-                    PrimitiveList[PrimitiveList.Count - 1].Fill(g,DrawPen);
+                    PrimitiveList[PrimitiveList.Count - 1].Fill(g, DrawPen);
                     break;
 
 
                 case DrawUgl3:
                     PrimitiveList.Add(new Ugl3(ColorUgl, WforUgl));
+                    //добавление вершин уголка на основе заданного размера
                     PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
-                    PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y-WforUgl));
-                    PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X+ WforUgl/3, e.Y- WforUgl/3));
-                    PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X+ WforUgl, e.Y));
+                    PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y - WforUgl));
+                    PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X + WforUgl / 3, e.Y - WforUgl / 3));
+                    PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X + WforUgl, e.Y));
                     PrimitiveList[PrimitiveList.Count - 1].Fill(g, DrawPen);
 
                     break;
 
                 case SelectAndMove:
                     selector = 0;
-                    for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn ++)
+                    for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
                     {
 
                         if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
                         {
                             selector = pgnn;
                             g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
-                            checkPgn = true; 
-                          // MessageBox.Show("Выбран угольник номер " + selector.ToString());
+                            checkPgn = true;
+                            // MessageBox.Show("Выбран фигура номер " + selector.ToString());
                             break;
-                            
+
                         }
                         else checkPgn = false;
 
@@ -221,7 +232,7 @@ namespace GSC_36
                             checkPgn = true;
                             OperationType = SelectAndReflectVerticalStage2;
 
-                            // MessageBox.Show("Выбран угольник номер " + selector.ToString());
+                            // MessageBox.Show("Выбран фигурв номер " + selector.ToString());
                             break;
 
                         }
@@ -238,7 +249,7 @@ namespace GSC_36
                     PrimitiveList[selector].ReflectVertical(e.X);
                     PrimitiveList[selector].Fill(g, DrawPen);
 
-                    
+
                     g.Clear(Color.White);
                     PboMain.Image = myBitmap;
                     g.DrawLine(DrawPenForVecrors, e.X, 1000, e.X, -1000);
@@ -246,10 +257,10 @@ namespace GSC_36
                     {
                         p.Fill(g, DrawPen);
                     }
-                    
-                    
+
+
                     Task.Delay(1500).Wait();
-                    
+
                     g.Clear(Color.White);
                     PboMain.Image = myBitmap;
                     foreach (var p in PrimitiveList)
@@ -262,7 +273,7 @@ namespace GSC_36
                     break;
 
 
-                case  SelectAndReflectCentral:
+                case SelectAndReflectCentral:
                     selector = 0;
                     for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
                     {
@@ -287,8 +298,8 @@ namespace GSC_36
                 case SelectAndReflectCentralStage2:
 
                     PboMain.Image = myBitmap;
-                    g.DrawLine(DrawPenForVecrors, e.X, e.Y+20, e.X, e.Y - 20);
-                    g.DrawLine(DrawPenForVecrors, e.X +20, e.Y , e.X - 20, e.Y );
+                    g.DrawLine(DrawPenForVecrors, e.X, e.Y + 20, e.X, e.Y - 20);
+                    g.DrawLine(DrawPenForVecrors, e.X + 20, e.Y, e.X - 20, e.Y);
                     Task.Delay(1500).Wait();
 
                     PrimitiveList[selector].ReflectCentral(e.X, e.Y);
@@ -336,7 +347,7 @@ namespace GSC_36
                             if (r == DialogResult.OK)
                             {
                                 if (double.TryParse(f.ReturnAnng, out result))
-                                {                                   
+                                {
                                     AnglRotate = result;
                                     PrimitiveList[selector].Rotate(AnglRotate);
                                     g.Clear(Color.White);
@@ -354,7 +365,7 @@ namespace GSC_36
                             }
                             else
                             {
-                                MessageBox.Show("Отмена операции"); 
+                                MessageBox.Show("Отмена операции");
                                 break;
 
                             }
@@ -395,6 +406,54 @@ namespace GSC_36
 
                     break;
 
+                case RotateMouse:
+                    selector = 0;
+                    for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
+                    {
+
+                        if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
+                        {
+                            Xstart = e.X;
+                            Ystart = e.Y;
+                            selector = pgnn;
+                            g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
+                            checkPgn = true;
+                            OperationType = RotateMouseStage2;
+                            
+                            // MessageBox.Show("Выбран фигура номер " + selector.ToString());
+                            break;
+
+                        }
+                        else checkPgn = false;
+
+                    };
+
+                    break;
+                case RotateMouseStage2:
+
+                    if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    {
+                        if (OperationType == RotateMouseStage2 & checkPgn)
+                        {
+                            PboMainMousePos = e.Location;
+
+
+                            PrimitiveList[selector].RotateMouse(g,Xstart,Ystart, e.X, e.Y);
+                            g.Clear(PboMain.BackColor);
+                            PrimitiveList[selector].Fill(g, DrawPen);
+                            PboMain.Image = myBitmap;
+                            foreach (var p in PrimitiveList)
+                            {
+                                p.Fill(g, DrawPen);
+                            }
+                            OperationType = RotateMouse;
+                        }
+                    }
+                    
+
+                    break;
+
+
                 case TMORazn:
                     selectorForTMO1 = 0;
 
@@ -429,169 +488,6 @@ namespace GSC_36
                             continue;
                         if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
                         {
-                            selectorForTMO2 = pgnn;
-                            g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
-                            checkPgn = true;
-                            // MessageBox.Show("Выбрана для удаления фигура номер " + selector.ToString());
-                            break;
-
-                        }
-                        else checkPgn = false;
-
-                    };
-                    if (checkPgn)
-                    {
-                        List<Point> AllPoint = new List<Point>();
-                        for (int i = 0; i < PrimitiveList[selectorForTMO1].getxl().Count(); i++) 
-                        {
-                            AllPoint.Add(PrimitiveList[selectorForTMO1].getxl()[i]);
-                        }
-                        for (int i = 0; i < PrimitiveList[selectorForTMO1].getxr().Count(); i++)
-                        {
-                            AllPoint.Add(PrimitiveList[selectorForTMO1].getxr()[i]);
-                        }
-                        for (int i = 0; i < PrimitiveList[selectorForTMO2].getxl().Count(); i++)
-                        {
-                            AllPoint.Add(PrimitiveList[selectorForTMO2].getxl()[i]);
-                        }
-                        for (int i = 0; i < PrimitiveList[selectorForTMO2].getxr().Count(); i++)
-                        {
-                            AllPoint.Add(PrimitiveList[selectorForTMO2].getxr()[i]);
-                        }
-
-                        AllPoint.Sort((a, b) => a.Y.CompareTo(b.Y));
-
-
-                        //      List<ClassForTMOtest> M = new List<ClassForTMOtest>();
-                        //      List<Point> Xrl = new List<Point>();
-                        //      List<Point> Xrr = new List<Point>();
-                        List<Point> XrlForTMOResult = new List<Point>();
-                        List<Point> XrrForTMOResult = new List<Point>();
-                        for (int y = AllPoint[0].Y; y <= AllPoint[AllPoint.Count()-1].Y; y++) 
-                         {
-                            List<ClassForTMOtest> M = new List<ClassForTMOtest>();
-                            List<Point> Xrl = new List<Point>();
-                            List<Point> Xrr = new List<Point>();
-
-                            int n =  PrimitiveList[selectorForTMO1].getxl().Count();
-                            for (int i = 0; i < n; i++) 
-                            {
-                                if (y == PrimitiveList[selectorForTMO1].getxl()[i].Y)
-                                M.Add(new ClassForTMOtest( new Point(PrimitiveList[selectorForTMO1].getxl()[i].X, y), 2));
-                            }
-
-                            int nM = n;
-                            n =  PrimitiveList[selectorForTMO1].getxr().Count();
-
-                            for (int i = 0; i < n; i++) 
-                            {
-                                if (y == PrimitiveList[selectorForTMO1].getxr()[i].Y)
-                                    M.Add(new ClassForTMOtest (new Point(PrimitiveList[selectorForTMO1].getxr()[i].X, y), -2));
-                            }
-
-                            nM = nM + n;
-                            n= PrimitiveList[selectorForTMO2].getxl().Count();
-
-                            for (int i = 0; i < n; i++) 
-                            {
-                                if (y == PrimitiveList[selectorForTMO2].getxl()[i].Y)
-                                    M.Add(new ClassForTMOtest ( new Point(PrimitiveList[selectorForTMO2].getxl()[i].X, y) , 1));
-                            }
-                            nM = nM + n;
-                            n = PrimitiveList[selectorForTMO2].getxr().Count();
-                            for (int i = 0; i < n; i++)
-                            {
-                                if (y == PrimitiveList[selectorForTMO2].getxr()[i].Y)
-                                    M.Add(new ClassForTMOtest( new Point(PrimitiveList[selectorForTMO2].getxr()[i].X, y), -1));
-                            }
-
-                            nM = nM + n;
-
-                            M.Sort((a, b) => a.p.X.CompareTo(b.p.X));
-
-
-                            int k = 0; int m = 0; int Q = 0; int Qnew = 0;
-
-                            if (M[0].p.X <= 0 && M[0].Q < 0)//здесь опечатка?
-                            {
-                                Xrl.Add(new Point(0, M[0].p.Y));
-                                Q = -M[0].Q;
-                                k++;
-                            }
-                            for (int i = 0; i < M.Count; i++)
-                            {
-                                int x = M[i].p.X; Qnew = Q + M[i].Q;
-
-                                if ((Q != 1 && Q != 2 && Q != 3) && (Qnew == 1 || Qnew == 2 || Qnew == 3))
-                                {
-                                    Xrl.Add(new Point(x, y)); k++;
-                                }
-                                if ((Qnew != 1 && Qnew != 2 && Qnew != 3) && (Q == 1 || Q == 2 || Q == 3))
-                                {
-                                    Xrr.Add(new Point(x, y)); m++;
-                                }
-
-                                Q = Qnew;
-                            }
-
-                            //  Xrr.Sort((a, b) => a.Y.CompareTo(b.Y));
-                            //  Xrl.Sort((a, b) => a.Y.CompareTo(b.Y));
-                           
-                       
-                            for (int i = 0; i < Xrr.Count; i++)
-                            {
-                                XrrForTMOResult.Add(new Point(Xrr[i].X, y));
-                                XrlForTMOResult.Add(new Point(Xrl[i].X, y));
-                                g.DrawLine(new Pen(Color.Cyan, 2), new Point(Xrl[i].X, y), new Point(Xrr[i].X, y));
-                            }
-                        }
-                        TMOResult newTmoResult = new TMOResult(XrlForTMOResult, XrrForTMOResult);
-
-                        List<Primitive> NewPrimitiveList = new List<Primitive>();
-                        for (int i = 0; i < PrimitiveList.Count; i++)
-                        {
-                            if (i == selectorForTMO1 || i == selectorForTMO2)
-                            {
-                                continue;
-                            }
-                            NewPrimitiveList.Add(PrimitiveList[i]);
-
-                        }
-                        PrimitiveList.Clear();
-                        foreach (var p in NewPrimitiveList)
-                        {
-                           PrimitiveList.Add(p);
-                        }
-                        NewPrimitiveList.Clear();
-                        PrimitiveList.Add(newTmoResult);
-                        PboMain.Image = myBitmap;
-                        g.Clear(Color.White);
-                        foreach (var p in PrimitiveList)
-                        {
-                            p.Fill(g, DrawPen);
-                        }
-                        checkPgn = false;
-
-                        //  Xrr.Sort((a, b) => a.Y.CompareTo(b.Y));
-                        //  Xrl.Sort((a, b) => a.Y.CompareTo(b.Y));
-
-                        //    for (int i = 0; i < Xrr.Count ; i++)
-                        //    {
-                        //        g.DrawLine(new Pen(Color.Cyan, 2), Xrl[i], Xrr[i]);
-                        //    }
-
-
-                    }
-
-                    break;
-                case TMORaznStage2:
-                    for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
-                    {
-                        selectorForTMO2 = 0;
-                        if (pgnn == selectorForTMO1)
-                            continue;
-                        if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
-                        {   
                             selectorForTMO2 = pgnn;
                             g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
                             checkPgn = true;
@@ -685,11 +581,174 @@ namespace GSC_36
                             {
                                 int x = M[i].p.X; Qnew = Q + M[i].Q;
 
-                                if (Q != 2  && Qnew == 2 )
+                                if ((Q != 1 && Q != 2 && Q != 3) && (Qnew == 1 || Qnew == 2 || Qnew == 3))
                                 {
                                     Xrl.Add(new Point(x, y)); k++;
                                 }
-                                if (Qnew != 2  && Q == 2 )
+                                if ((Qnew != 1 && Qnew != 2 && Qnew != 3) && (Q == 1 || Q == 2 || Q == 3))
+                                {
+                                    Xrr.Add(new Point(x, y)); m++;
+                                }
+
+                                Q = Qnew;
+                            }
+
+                            //  Xrr.Sort((a, b) => a.Y.CompareTo(b.Y));
+                            //  Xrl.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+
+                            for (int i = 0; i < Xrr.Count; i++)
+                            {
+                                XrrForTMOResult.Add(new Point(Xrr[i].X, y));
+                                XrlForTMOResult.Add(new Point(Xrl[i].X, y));
+                                g.DrawLine(new Pen(Color.Cyan, 2), new Point(Xrl[i].X, y), new Point(Xrr[i].X, y));
+                            }
+                        }
+                        TMOResult newTmoResult = new TMOResult(XrlForTMOResult, XrrForTMOResult);
+
+                        List<Primitive> NewPrimitiveList = new List<Primitive>();
+                        for (int i = 0; i < PrimitiveList.Count; i++)
+                        {
+                            if (i == selectorForTMO1 || i == selectorForTMO2)
+                            {
+                                continue;
+                            }
+                            NewPrimitiveList.Add(PrimitiveList[i]);
+
+                        }
+                        PrimitiveList.Clear();
+                        foreach (var p in NewPrimitiveList)
+                        {
+                            PrimitiveList.Add(p);
+                        }
+                        NewPrimitiveList.Clear();
+                        PrimitiveList.Add(newTmoResult);
+                        PboMain.Image = myBitmap;
+                        g.Clear(Color.White);
+                        foreach (var p in PrimitiveList)
+                        {
+                            p.Fill(g, DrawPen);
+                        }
+                        checkPgn = false;
+
+                        //  Xrr.Sort((a, b) => a.Y.CompareTo(b.Y));
+                        //  Xrl.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+                        //    for (int i = 0; i < Xrr.Count ; i++)
+                        //    {
+                        //        g.DrawLine(new Pen(Color.Cyan, 2), Xrl[i], Xrr[i]);
+                        //    }
+
+
+                    }
+
+                    break;
+                case TMORaznStage2:
+                    for (int pgnn = 0; pgnn < PrimitiveList.Count; pgnn++)
+                    {
+                        selectorForTMO2 = 0;
+                        if (pgnn == selectorForTMO1)
+                            continue;
+                        if (PrimitiveList[pgnn].ThisPgn(e.X, e.Y))
+                        {
+                            selectorForTMO2 = pgnn;
+                            g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
+                            checkPgn = true;
+                            // MessageBox.Show("Выбрана для удаления фигура номер " + selector.ToString());
+                            break;
+
+                        }
+                        else checkPgn = false;
+
+                    };
+                    if (checkPgn)
+                    {
+                        List<Point> AllPoint = new List<Point>();
+                        for (int i = 0; i < PrimitiveList[selectorForTMO1].getxl().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO1].getxl()[i]);
+                        }
+                        for (int i = 0; i < PrimitiveList[selectorForTMO1].getxr().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO1].getxr()[i]);
+                        }
+                        for (int i = 0; i < PrimitiveList[selectorForTMO2].getxl().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO2].getxl()[i]);
+                        }
+                        for (int i = 0; i < PrimitiveList[selectorForTMO2].getxr().Count(); i++)
+                        {
+                            AllPoint.Add(PrimitiveList[selectorForTMO2].getxr()[i]);
+                        }
+
+                        AllPoint.Sort((a, b) => a.Y.CompareTo(b.Y));
+
+
+                        //      List<ClassForTMOtest> M = new List<ClassForTMOtest>();
+                        //      List<Point> Xrl = new List<Point>();
+                        //      List<Point> Xrr = new List<Point>();
+                        List<Point> XrlForTMOResult = new List<Point>();
+                        List<Point> XrrForTMOResult = new List<Point>();
+                        for (int y = AllPoint[0].Y; y <= AllPoint[AllPoint.Count() - 1].Y; y++)
+                        {
+                            List<ClassForTMOtest> M = new List<ClassForTMOtest>();
+                            List<Point> Xrl = new List<Point>();
+                            List<Point> Xrr = new List<Point>();
+
+                            int n = PrimitiveList[selectorForTMO1].getxl().Count();
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO1].getxl()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO1].getxl()[i].X, y), 2));
+                            }
+
+                            int nM = n;
+                            n = PrimitiveList[selectorForTMO1].getxr().Count();
+
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO1].getxr()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO1].getxr()[i].X, y), -2));
+                            }
+
+                            nM = nM + n;
+                            n = PrimitiveList[selectorForTMO2].getxl().Count();
+
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO2].getxl()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO2].getxl()[i].X, y), 1));
+                            }
+                            nM = nM + n;
+                            n = PrimitiveList[selectorForTMO2].getxr().Count();
+                            for (int i = 0; i < n; i++)
+                            {
+                                if (y == PrimitiveList[selectorForTMO2].getxr()[i].Y)
+                                    M.Add(new ClassForTMOtest(new Point(PrimitiveList[selectorForTMO2].getxr()[i].X, y), -1));
+                            }
+
+                            nM = nM + n;
+
+                            M.Sort((a, b) => a.p.X.CompareTo(b.p.X));
+
+
+                            int k = 0; int m = 0; int Q = 0; int Qnew = 0;
+
+                            if (M[0].p.X <= 0 && M[0].Q < 0)//здесь опечатка?
+                            {
+                                Xrl.Add(new Point(0, M[0].p.Y));
+                                Q = -M[0].Q;
+                                k++;
+                            }
+                            for (int i = 0; i < M.Count; i++)
+                            {
+                                int x = M[i].p.X; Qnew = Q + M[i].Q;
+
+                                if (Q != 2 && Qnew == 2)
+                                {
+                                    Xrl.Add(new Point(x, y)); k++;
+                                }
+                                if (Qnew != 2 && Q == 2)
                                 {
                                     Xrr.Add(new Point(x, y)); m++;
                                 }
@@ -798,11 +857,11 @@ namespace GSC_36
         private void настройкаПрямойToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OptionsLine formLine = new OptionsLine();
-           DialogResult r = formLine.ShowDialog();
+            DialogResult r = formLine.ShowDialog();
             int resultW = 0;
-            if (r == DialogResult.OK) 
+            if (r == DialogResult.OK)
             {
-                if ( int.TryParse(formLine.ReturnWStr,out resultW) ) 
+                if (int.TryParse(formLine.ReturnWStr, out resultW))
                 {
                     if (resultW >= 1 && resultW <= 10)
                     {
@@ -893,7 +952,7 @@ namespace GSC_36
             {
                 if (int.TryParse(formZv.ReturnN, out resultN) && int.TryParse(formZv.ReturnR, out resultR))
                 {
-                    if ((resultN >= 3 && resultN <= 20) && (resultR >= 10 && resultR <= 100) )
+                    if ((resultN >= 3 && resultN <= 20) && (resultR >= 10 && resultR <= 100))
                     {
                         nForStar = resultN;
                         rForstar = resultR;
@@ -976,11 +1035,13 @@ namespace GSC_36
 
         private void PboMain_MouseMove(object sender, MouseEventArgs e)
         {
+
             PboMain.Image = myBitmap;
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                if ( OperationType == 5 & checkPgn)
+                if (OperationType == 5 & checkPgn)
                 {
+                    
                     PrimitiveList[selector].Move(e.X - PboMainMousePos.X, e.Y - PboMainMousePos.Y);
                     g.Clear(PboMain.BackColor);
 
@@ -994,6 +1055,10 @@ namespace GSC_36
                     PboMainMousePos = e.Location;
 
                 }
+
+
+                
+
             }
 
         }
@@ -1056,8 +1121,19 @@ namespace GSC_36
         {
 
         }
+
+        private void повернутьМышкойToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OperationType = RotateMouse;
+        }
+
+        private void PboMain_MouseUp(object sender, MouseEventArgs e)
+        {
+            PboMain.Image = myBitmap;
+           
+        }
+
+
+
     }
-
-
-
 }

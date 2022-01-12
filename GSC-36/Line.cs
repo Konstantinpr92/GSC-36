@@ -12,6 +12,7 @@ namespace GSC_36
         List<Point> Xl = new List<Point>();
         List<Point> Xr = new List<Point>();
 
+        //список для хранения вспомогательного многоугольника для получения правых и левых границ для ТМО
         List<Point> auxilVertexLixtForTMO = new List<Point>(); 
 
        public Boolean FirstPoint = true;
@@ -34,6 +35,7 @@ namespace GSC_36
         public override void Fill(Graphics g, Pen DPen)
         {
             int counterForPoints = 0;
+            //4 точки для вспомогательного многоугольника 
             Point AuxPoint1 = new Point();
 
             Point AuxPoint2=  new Point();
@@ -41,11 +43,13 @@ namespace GSC_36
             Point AuxPoint3 = new Point();
 
             Point AuxPoint4 = new Point();
+
             auxilVertexLixtForTMO.Clear();
 
             AllPoints.Clear();
             Pen DrawPen = new Pen(ColorLine, WLine);
 
+            //из методических указаний
             int x, y, dx, dy, Sx = 0, Sy = 0;
             int F = 0, Fx = 0, dFx = 0, Fy = 0, dFy = 0;
             dx = (int)VertexList[1].X - (int)VertexList[0].X;
@@ -135,6 +139,7 @@ namespace GSC_36
                
 
             }
+            //получение многоугольника и его правой и левой  границ для ТМО
             auxilVertexLixtForTMO.Add(AuxPoint1);
             auxilVertexLixtForTMO.Add(AuxPoint2);
             auxilVertexLixtForTMO.Add(AuxPoint3);
@@ -197,6 +202,7 @@ namespace GSC_36
             return Xr;
         }
 
+        //перемещение - простое изменение координат кажной точки-вершины на переданную разницу в методе PboMain_MouseMove
         public override void Move(int dx, int dy)
         {
             int n = VertexList.Count() - 1;
@@ -209,6 +215,17 @@ namespace GSC_36
             }
         }
 
+
+        /*  
+         *  https://habr.com/ru/post/426387/
+         *  Зеркальное отражение относительно оси абсцисс приведет к тому, что координата x точки не меняется, а координата y меняет знак на противоположный
+ x' = x, y' = - y.
+ При отражении относительно оси ординат знак меняется у координаты x, а у координаты y знак не изменяется
+ x' = - x, y' = y. (4)
+ Отражение относительно начала координат изменяет знаки на противоположные у обеих координат:
+ x' = - x, y' = - y. (5)
+ В том случае, если отражение производится относительно произвольной оси, то до выполнения отражения необходимо будет выполнить параллельный перенос объекта и оси на вектор a так, чтобы ось отражения совпала с одной из координатных осей, затем выполнить отражение, а после этого выполнить параллельный перенос на вектор(− a).
+ При отражении относительно произвольного полюса вначале выполняется параллельный перенос, совмещающий полюс с началом координат, затем отражение относительно начала координат и после этого параллельный перенос для возврата полюса в первоначальное положение.*/
         public override void ReflectCentral(int dx, int dy)
         {
 
@@ -236,6 +253,7 @@ namespace GSC_36
             }
         }
 
+        //https://habr.com/ru/post/426387/
         public override void ReflectVertical(int dx)
         {
             PointF fP = new PointF();
@@ -263,12 +281,15 @@ namespace GSC_36
 
         }
 
+        //вращение относительно центра
         public override void Rotate(double ang)
         {
             double rad = ang * (Math.PI / 180.0);
-
+            //ищем координаты центра
             double x0 = (VertexList[0].X + VertexList[1].X) / 2.0;
             double y0 = (VertexList[0].Y + VertexList[1].Y) / 2.0;
+            //https://habr.com/ru/post/342674/
+            //https://blog.foolsoft.ru/c-povorot-figury-otnositelno-zadannoj-tochki-ili-nachala-koordinat/
             for (int i = 0; i < VertexList.Count; i++)
             {
                 int dx = (int)Math.Round(VertexList[i].X - x0);
@@ -280,6 +301,50 @@ namespace GSC_36
                 VertexList[i] = new PointF((int)Math.Round(ptX), (int)Math.Round(ptY));
 
             }
+        }
+
+        public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
+        {
+            //  https://stackoverflow.com/questions/1211212/how-to-calculate-an-angle-from-three-points
+
+            //ищем координаты центра
+            double x0 = (VertexList[0].X + VertexList[1].X) / 2.0;
+            double y0 = (VertexList[0].Y + VertexList[1].Y) / 2.0;
+            Point c = new Point((int)x0, (int)y0);
+
+            //вчпомогательная точка
+            //double x1 = (VertexList[0].X + VertexList[1].X) / 2.0;
+            //double y1 = (VertexList[0].Y + VertexList[1].Y) / 2.0 - 1000;
+
+            Point p0 = new Point((int)x1, (int)y1);
+            Point p1 = new Point((int)x2, (int)y2);
+            
+                var p0c = Math.Sqrt(Math.Pow(c.X - p0.X, 2) +
+                                    Math.Pow(c.Y - p0.Y, 2)); // p0->c (b)   
+                var p1c = Math.Sqrt(Math.Pow(c.X - p1.X, 2) +
+                                    Math.Pow(c.Y - p1.Y, 2)); // p1->c (a)
+                var p0p1 = Math.Sqrt(Math.Pow(p1.X - p0.X, 2) +
+                                     Math.Pow(p1.Y - p0.Y, 2)); // p0->p1 (c)
+                double ang = Math.Acos((p1c * p1c + p0c * p0c - p0p1 * p0p1) / (2 * p1c * p0c));
+
+                 double rad = ang; //* (Math.PI / 180.0);
+                g.DrawLine(new Pen(Color.Green), c.X, c.Y, p0.X, p0.Y);
+                g.DrawLine(new Pen(Color.Green), c.X, c.Y, p1.X, p1.Y);
+               // Task.Delay(1500).Wait();
+
+
+                for (int i = 0; i < VertexList.Count; i++)
+                {
+                    int dx = (int)Math.Round(VertexList[i].X - x0);
+                    int dy = (int)Math.Round(VertexList[i].Y - y0);
+
+                    double ptX = x0 + (dx * Math.Cos(rad) - dy * Math.Sin(rad));
+                    double ptY = y0 + (dx * Math.Sin(rad) + dy * Math.Cos(rad));
+
+                    VertexList[i] = new PointF((int)Math.Round(ptX), (int)Math.Round(ptY));
+
+                }
+            
         }
 
         public override bool ThisPgn(int mX, int mY)
@@ -297,5 +362,7 @@ namespace GSC_36
 
             return check;
         }
+
+      
     }
 }

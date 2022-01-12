@@ -42,6 +42,7 @@ namespace GSC_36
             this.отразитьЗеркальноОтносительноЗаданногоЦентраToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.повернутьНаГрадусовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.повернутьМышкойToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.настройкаПрямойToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.настройкаКривойToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -146,6 +147,7 @@ namespace GSC_36
             this.переместитьToolStripMenuItem,
             this.отразитьОтноситьльноВертикальнойПрямойToolStripMenuItem,
             this.отразитьЗеркальноОтносительноЗаданногоЦентраToolStripMenuItem,
+            this.повернутьМышкойToolStripMenuItem,
             this.повернутьНаГрадусовToolStripMenuItem,
             this.удалитьToolStripMenuItem});
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
@@ -187,6 +189,13 @@ namespace GSC_36
             this.удалитьToolStripMenuItem.Text = "Удалить";
             this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.удалитьToolStripMenuItem_Click);
             // 
+            // повернутьМышкойToolStripMenuItem
+            // 
+            this.повернутьМышкойToolStripMenuItem.Name = "повернутьМышкойToolStripMenuItem";
+            this.повернутьМышкойToolStripMenuItem.Size = new System.Drawing.Size(364, 22);
+            this.повернутьМышкойToolStripMenuItem.Text = "Повернуть мышкой";
+            this.повернутьМышкойToolStripMenuItem.Click += new System.EventHandler(this.повернутьМышкойToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.CheckOnClick = true;
@@ -203,28 +212,28 @@ namespace GSC_36
             // настройкаПрямойToolStripMenuItem
             // 
             this.настройкаПрямойToolStripMenuItem.Name = "настройкаПрямойToolStripMenuItem";
-            this.настройкаПрямойToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.настройкаПрямойToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.настройкаПрямойToolStripMenuItem.Text = "Настройка прямой";
             this.настройкаПрямойToolStripMenuItem.Click += new System.EventHandler(this.настройкаПрямойToolStripMenuItem_Click);
             // 
             // настройкаКривойToolStripMenuItem
             // 
             this.настройкаКривойToolStripMenuItem.Name = "настройкаКривойToolStripMenuItem";
-            this.настройкаКривойToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.настройкаКривойToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.настройкаКривойToolStripMenuItem.Text = "Настройка кривой";
             this.настройкаКривойToolStripMenuItem.Click += new System.EventHandler(this.настройкаКривойToolStripMenuItem_Click);
             // 
             // настройкаУголкаToolStripMenuItem
             // 
             this.настройкаУголкаToolStripMenuItem.Name = "настройкаУголкаToolStripMenuItem";
-            this.настройкаУголкаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.настройкаУголкаToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.настройкаУголкаToolStripMenuItem.Text = "Настройка уголка";
             this.настройкаУголкаToolStripMenuItem.Click += new System.EventHandler(this.настройкаУголкаToolStripMenuItem_Click);
             // 
             // настройкаЗвездыToolStripMenuItem
             // 
             this.настройкаЗвездыToolStripMenuItem.Name = "настройкаЗвездыToolStripMenuItem";
-            this.настройкаЗвездыToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.настройкаЗвездыToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.настройкаЗвездыToolStripMenuItem.Text = "Настройка звезды";
             this.настройкаЗвездыToolStripMenuItem.Click += new System.EventHandler(this.настройкаЗвездыToolStripMenuItem_Click);
             // 
@@ -234,7 +243,7 @@ namespace GSC_36
             this.HelpStatus.CheckOnClick = true;
             this.HelpStatus.CheckState = System.Windows.Forms.CheckState.Checked;
             this.HelpStatus.Name = "HelpStatus";
-            this.HelpStatus.Size = new System.Drawing.Size(180, 22);
+            this.HelpStatus.Size = new System.Drawing.Size(179, 22);
             this.HelpStatus.Text = "Подсказки";
             this.HelpStatus.Click += new System.EventHandler(this.подсказкиToolStripMenuItem_Click);
             // 
@@ -463,6 +472,7 @@ namespace GSC_36
             this.PboMain.TabStop = false;
             this.PboMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PboMain_MouseDown);
             this.PboMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PboMain_MouseMove);
+            this.PboMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PboMain_MouseUp);
             // 
             // Form1
             // 
@@ -539,6 +549,7 @@ namespace GSC_36
         private System.Windows.Forms.ToolStripMenuItem обьединениеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem разностьАВToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem HelpStatus;
+        private System.Windows.Forms.ToolStripMenuItem повернутьМышкойToolStripMenuItem;
     }
 }
 

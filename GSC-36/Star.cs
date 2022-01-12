@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 namespace GSC_36
 {
 
-
     public class Star : Primitive
     {
-       
-      
         int N = 5;
         int r = 60;
         Color ColorStar = Color.Black;
@@ -38,10 +35,7 @@ namespace GSC_36
             VertexList.Add(NewVertex);
         }
 
-
-
-     
-
+        //https://www.cyberforum.ru/windows-forms/thread1112848.html
         public override void Fill(Graphics g, Pen DPen)
         {
             Xr.Clear();
@@ -279,6 +273,24 @@ namespace GSC_36
         public override List<Point> getxr()
         {
             return Xr;
+        }
+
+        public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
+        {
+
+            Point c = new Point((int)x0, (int)y0);
+            Point p0 = new Point((int)x1, (int)y1);
+            Point p1 = new Point((int)x2, (int)y2);
+            var p0c = Math.Sqrt(Math.Pow(c.X - p0.X, 2) +
+                    Math.Pow(c.Y - p0.Y, 2)); // p0->c (b)   
+            var p1c = Math.Sqrt(Math.Pow(c.X - p1.X, 2) +
+                                Math.Pow(c.Y - p1.Y, 2)); // p1->c (a)
+            var p0p1 = Math.Sqrt(Math.Pow(p1.X - p0.X, 2) +
+                                 Math.Pow(p1.Y - p0.Y, 2)); // p0->p1 (c)
+            double rad = Math.Acos((p1c * p1c + p0c * p0c - p0p1 * p0p1) / (2 * p1c * p0c));
+
+            double ang = rad / ((Math.PI / 180.0));
+            Rotate(ang);
         }
     }
 }
