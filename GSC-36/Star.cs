@@ -125,8 +125,7 @@ namespace GSC_36
                 VertexList[i] = fP;
                 
             }
-
-           
+ 
         }
 
         public override void ReflectCentral(int dx, int dy)

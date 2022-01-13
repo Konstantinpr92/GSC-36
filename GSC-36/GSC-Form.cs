@@ -65,6 +65,8 @@ namespace GSC_36
         const int TMORaznStage2 = 111;
         const int RotateMouse = 12;
         const int RotateMouseStage2 = 112;
+        const int DrawCurve2 = 13;
+        const int DrawCurve2Stage2 = 113;
 
         //текущая операция
         int OperationType = 0;
@@ -124,12 +126,52 @@ namespace GSC_36
 
             switch (OperationType)
             {
+
+                case DrawCurve2:
+                    PrimitiveList.Add(new ErcurveV2(ColorCurve, WCurve));
+                    OperationType = DrawCurve2Stage2;
+                    PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
+                    g.DrawEllipse(DrawPenForVecrors, e.X, e.Y, 2, 2);
+                    break;
+
+                case DrawCurve2Stage2:
+                    if (PrimitiveList[PrimitiveList.Count - 1].VertexList.Count == 1)
+                    {
+                        PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
+                        g.DrawLine(DrawPenForVecrors, PrimitiveList[PrimitiveList.Count - 1].VertexList[0], PrimitiveList[PrimitiveList.Count - 1].VertexList[1]);
+                        break;
+                    }
+                    if (PrimitiveList[PrimitiveList.Count - 1].VertexList.Count == 2)
+                    {
+                        PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
+                        g.DrawEllipse(DrawPenForVecrors, e.X, e.Y, 2, 2);
+                        break;
+                    }
+                    if (PrimitiveList[PrimitiveList.Count - 1].VertexList.Count == 3)
+                    {
+                        PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
+                        g.DrawLine(DrawPenForVecrors, PrimitiveList[PrimitiveList.Count - 1].VertexList[3], PrimitiveList[PrimitiveList.Count - 1].VertexList[2]);
+                        PrimitiveList[PrimitiveList.Count - 1].Fill(g, DrawPen);
+                    }
+                    OperationType = DrawCurve2;
+                    PboMain.Image = myBitmap;
+
+                    //задержка для отображения вспомогательных линий
+                    Task.Delay(2000).Wait();
+                    g.Clear(Color.White);
+                    foreach (var p in PrimitiveList)
+                    {
+                        p.Fill(g, DrawPen);
+                    }
+                    break;
+
                 case DrawLine:
                     PrimitiveList.Add(new Line(ColorLine, WLine));
                     g.DrawEllipse(new Pen(ColorLine, WLine), e.X, e.Y, 2, 2);
                     OperationType = DrawLineStage2;
                     PrimitiveList[PrimitiveList.Count - 1].VertexList.Add(new PointF(e.X, e.Y));
                     break;
+
                 case DrawLineStage2:
                     g.DrawEllipse(new Pen(ColorLine, WLine), e.X, e.Y, 2, 2);
 
@@ -1132,7 +1174,9 @@ namespace GSC_36
            
         }
 
-
-
+        private void криваяЭрмита2ВариантToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OperationType = DrawCurve2;
+        }
     }
 }

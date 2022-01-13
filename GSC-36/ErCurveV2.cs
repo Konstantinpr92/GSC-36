@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GSC_36
 {
-   public class Ercurve : Primitive
+    public class ErcurveV2 : Primitive
     {
         public double x0;
         public double y0;
@@ -18,52 +18,63 @@ namespace GSC_36
         List<Point> Xr = new List<Point>();
         List<PointF> AllPoints = new List<PointF>();
 
-        public Ercurve(Color c, int w)
+        public ErcurveV2(Color c, int w)
         {
             VertexList = new List<PointF>();
             ColorCurve = c;
             WCurve = w;
         }
-
-        public override void Fill(Graphics g, Pen DPen)
+        public override void Fill(Graphics g, Pen DrPen)
         {
-           
-            Xl.Clear();
-            Xr.Clear();
-            AllPoints.Clear();
-
-            Pen DrawPen = new Pen(ColorCurve, WCurve);
-            double h0, h1, h2, h3;
-            for (double t = 0; t <= 1; t += 0.001)
+            DrPen = new Pen(ColorCurve, WCurve);
+            PointF[] P = VertexList.ToArray();
+            PointF[] L = new PointF[4]; // Матрица вещественных коэффициентов
+            PointF Pv1 = P[0];
+            PointF Pv2 = P[0];
+            const double dt = 0.0001;
+            double t = 0;
+            double xt, yt;
+            PointF Ppred = P[0], Pt = P[0];
+            // Касательные векторы
+            Pv1.X = (int)(4 * (P[1].X - P[0].X));
+            Pv1.Y = (int)(4 * (P[1].Y - P[0].Y));
+            Pv2.X = (int)(4 * (P[3].X - P[2].X));
+            Pv2.Y = (int)(4 * (P[3].Y - P[2].Y));
+            // Коэффициенты полинома
+            L[0].X = 2 * P[0].X - 2 * P[2].X + Pv1.X + Pv2.X; // Ax
+            L[0].Y = 2 * P[0].Y - 2 * P[2].Y + Pv1.Y + Pv2.Y; // Ay
+            L[1].X = -3 * P[0].X + 3 * P[2].X - 2 * Pv1.X - Pv2.X; // Bx
+            L[1].Y = -3 * P[0].Y + 3 * P[2].Y - 2 * Pv1.Y - Pv2.Y; // By
+            L[2].X = Pv1.X; // Cx
+            L[2].Y = Pv1.Y; // Cy
+            L[3].X = P[0].X; // Dx
+            L[3].Y = P[0].Y; // Dy
+            while (t < 1 + dt / 2)
             {
-                h0 = 2 * t * t * t - 3 * t * t + 1;
-                h1 = -2 * t * t * t + 3 * t * t;
-                h2 = t * t * t - 2 * t * t + t;
-                h3 = t * t * t - t * t;
+                xt = ((L[0].X * t + L[1].X) * t + L[2].X) * t + L[3].X;
+                yt = ((L[0].Y * t + L[1].Y) * t + L[2].Y) * t + L[3].Y;
+                Pt.X = (int)Math.Round(xt);
+                Pt.Y = (int)Math.Round(yt);
+                g.DrawLine(DrPen, Ppred, Pt);
+                //g.DrawRectangle(DrPen, Pt.X, Pt.Y, 1, 1);
+                AllPoints.Add(Ppred);
 
-                double ptx = VertexList[0].X * h0 + VertexList[2].X * h1 + (VertexList[1].X - VertexList[0].X) * h2 + (VertexList[3].X - VertexList[2].X) * h3;
-
-
-                double pty = VertexList[0].Y * h0 + VertexList[2].Y * h1 + (VertexList[1].Y - VertexList[0].Y) * h2 + (VertexList[3].Y - VertexList[2].Y) * h3;
-
-                double difference = Math.Abs(t * .00001);
-                PointF np = new PointF(0, 0);
-                if (Math.Abs(t - 0.5) <= difference)
-                {
-                    x0 = ptx;
-                    y0 = pty;
-                }
-                np.X = (float)ptx;
-                np.Y = (float)pty;
-                AllPoints.Add(np);
-
-                Xl.Add(new Point((int)ptx, (int)pty));
-                Xr.Add(new Point((int)ptx+2, (int)pty));
+                Xl.Add(new Point((int)Ppred.X, (int)Ppred.Y));
+                Xr.Add(new Point((int)Ppred.X + 2, (int)Ppred.Y));
 
                 Xl = Xl.Distinct().ToList();
                 Xr = Xr.Distinct().ToList();
 
-                g.DrawRectangle(DrawPen, (float)ptx, (float)pty, 1, 1);
+                Ppred = Pt;
+                t = t + dt;
+
+                double difference = Math.Abs(t * .001);
+                PointF np = new PointF(0, 0);
+                if (Math.Abs(t - (0.5+dt/4)) <= difference)
+                {
+                    x0 = Pt.X;
+                    y0 = Pt.Y;
+                }
             }
         }
 
@@ -91,7 +102,6 @@ namespace GSC_36
 
         public override void ReflectCentral(int dx, int dy)
         {
-
             PointF fP = new PointF();
             for (int i = 0; i < VertexList.Count(); i++)
             {
@@ -143,8 +153,8 @@ namespace GSC_36
         public override void Rotate(double ang)
         {
             double rad = ang * (Math.PI / 180.0);
-         //   double x0 = (VertexList[0].X + VertexList[2].X) / 2.0;
-         //   double y0 = (VertexList[0].Y + VertexList[2].Y) / 2.0;
+               //double x0 = (VertexList[0].X + VertexList[2].X) / 2.0;
+               //double y0 = (VertexList[0].Y + VertexList[2].Y) / 2.0;
             for (int i = 0; i < VertexList.Count; i++)
             {
                 int dx = (int)Math.Round(VertexList[i].X - x0);
