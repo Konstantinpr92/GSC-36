@@ -205,14 +205,49 @@ namespace GSC_36
         //перемещение - простое изменение координат кажной точки-вершины на переданную разницу в методе PboMain_MouseMove
         public override void Move(int dx, int dy)
         {
-            int n = VertexList.Count() - 1;
-            PointF fP = new PointF();
-            for (int i = 0; i <= n; i++)
+            //int n = VertexList.Count() - 1;
+            //PointF fP = new PointF();
+            //for (int i = 0; i <= n; i++)
+            //{
+            //    fP.X = VertexList[i].X + dx;
+            //    fP.Y = VertexList[i].Y + dy;
+            //    VertexList[i] = fP;
+            //}
+
+            //переделаем вычисления с испольованием матрицы преобразования
+            // создадим матрицы - многомерные массивы, с страница 49 лекций
+            //матрица исходных координат
+            double[,] matrixC = new double[1, 3];
+            //матрица преобразований для перемещения
+            double[,] matrixW = new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { dx, dy, 1 } };
+            //матрица новых координат, после преобразования
+            double[,] matrixCresul = new double[1, 3];
+
+
+            List<PointF> newVertexList = new List<PointF>();
+
+            for (int i = 0; i < VertexList.Count(); i++)
             {
-                fP.X = VertexList[i].X + dx;
-                fP.Y = VertexList[i].Y + dy;
-                VertexList[i] = fP;
+                matrixC = new double[,] { { VertexList[i].X, VertexList[i].Y, 1 } };
+
+                matrixCresul = new double[1, 3];
+
+                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
+                for (int m = 0; m < matrixCresul.GetLength(0); m++)
+                {
+                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
+                    {
+                        for (int j = 0; j < matrixW.GetLength(1); j++)
+                        {
+                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
+                        }
+                    }
+                }
+                newVertexList.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
+
+            VertexList = newVertexList;
+
         }
 
 
@@ -256,27 +291,112 @@ namespace GSC_36
         //https://habr.com/ru/post/426387/
         public override void ReflectVertical(int dx)
         {
-            PointF fP = new PointF();
-            for (int i = 0; i < VertexList.Count(); i++)
-            {
-                fP.Y = VertexList[i].Y;
-                fP.X = VertexList[i].X - dx;
-                VertexList[i] = fP;
-            }
+            //PointF fP = new PointF();
+            //for (int i = 0; i < VertexList.Count(); i++)
+            //{
+            //    fP.Y = VertexList[i].Y;
+            //    fP.X = VertexList[i].X - dx;
+            //    VertexList[i] = fP;
+            //}
+
+            //for (int i = 0; i < VertexList.Count(); i++)
+            //{
+            //    fP.Y = VertexList[i].Y;
+            //    fP.X = -VertexList[i].X;
+            //    VertexList[i] = fP;
+            //}
+
+            //for (int i = 0; i < VertexList.Count(); i++)
+            //{
+            //    fP.Y = VertexList[i].Y;
+            //    fP.X = VertexList[i].X + dx ;
+            //    VertexList[i] = fP;
+            //}
+
+            //переделаем вычисления с испольованием матрицы преобразования
+            // создадим матрицы - многомерные массивы, с страница 49 лекций
+            //матрица исходных координат
+            double[,] matrixC = new double[1, 3];
+            //матрица преобразований для перемещения для совпадения заданной прямой с осью Y 
+            double[,] matrixW = new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { -dx, 0, 1 } };
+            //матрица новых координат, после преобразования
+            double[,] matrixCresul = new double[1, 3];
+
+
+            List<PointF> newVertexList = new List<PointF>();
 
             for (int i = 0; i < VertexList.Count(); i++)
             {
-                fP.Y = VertexList[i].Y;
-                fP.X = -VertexList[i].X;
-                VertexList[i] = fP;
+                matrixC = new double[,] { { VertexList[i].X, VertexList[i].Y, 1 } };
+
+                matrixCresul = new double[1, 3];
+
+                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
+                for (int m = 0; m < matrixCresul.GetLength(0); m++)
+                {
+                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
+                    {
+                        for (int j = 0; j < matrixW.GetLength(1); j++)
+                        {
+                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
+                        }
+                    }
+                }
+                newVertexList.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
 
-            for (int i = 0; i < VertexList.Count(); i++)
+            //матрица преобразований для отражения относительно Y
+             matrixW = new double[,] { { -1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
+
+
+            List<PointF> newVertexList2 = new List<PointF>();
+            for (int i = 0; i < newVertexList.Count(); i++)
             {
-                fP.Y = VertexList[i].Y;
-                fP.X = VertexList[i].X + dx ;
-                VertexList[i] = fP;
+                matrixC = new double[,] { { newVertexList[i].X, newVertexList[i].Y, 1 } };
+
+                matrixCresul = new double[1, 3];
+
+                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
+                for (int m = 0; m < matrixCresul.GetLength(0); m++)
+                {
+                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
+                    {
+                        for (int j = 0; j < matrixW.GetLength(1); j++)
+                        {
+                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
+                        }
+                    }
+                }
+                newVertexList2.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
+
+            //матрица преобразований для перемещения для компенсации первого перемещения
+            matrixW = new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { +dx, 0, 1 } };
+
+            List<PointF> newVertexList3 = new List<PointF>();
+            for (int i = 0; i < newVertexList.Count(); i++)
+            {
+                matrixC = new double[,] { { newVertexList2[i].X, newVertexList2[i].Y, 1 } };
+
+                matrixCresul = new double[1, 3];
+
+                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
+                for (int m = 0; m < matrixCresul.GetLength(0); m++)
+                {
+                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
+                    {
+                        for (int j = 0; j < matrixW.GetLength(1); j++)
+                        {
+                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
+                        }
+                    }
+                }
+                newVertexList3.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
+            }
+
+
+            VertexList = newVertexList3;
+
 
 
         }
