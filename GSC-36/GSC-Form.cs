@@ -86,7 +86,6 @@ namespace GSC_36
             myBitmap = new Bitmap(PboMain.Width, PboMain.Height);
             g = Graphics.FromImage(myBitmap);
         }
-
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -273,7 +272,6 @@ namespace GSC_36
                             g.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 5, 5); ;    // Выбор
                             checkPgn = true;
                             OperationType = SelectAndReflectVerticalStage2;
-
                             // MessageBox.Show("Выбран фигурв номер " + selector.ToString());
                             break;
 
@@ -369,7 +367,6 @@ namespace GSC_36
 
                     OperationType = SelectAndReflectCentral;
 
-
                     break;
                 case SelectAndRotate:
                     selector = 0;
@@ -413,7 +410,6 @@ namespace GSC_36
                             }
 
                         }
-
 
                         else checkPgn = false;
 
@@ -1176,6 +1172,8 @@ namespace GSC_36
 
         private void криваяЭрмита2ВариантToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (HelpStatus.Checked)
+                MessageBox.Show("Построить Кривую Эрмита по алгоритму из методических указаний");
             OperationType = DrawCurve2;
         }
     }

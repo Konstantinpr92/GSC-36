@@ -13,13 +13,13 @@ namespace GSC_36
         List<Point> Xr = new List<Point>();
 
         //список для хранения вспомогательного многоугольника для получения правых и левых границ для ТМО
-        List<Point> auxilVertexLixtForTMO = new List<Point>(); 
+        List<Point> auxilVertexLixtForTMO = new List<Point>();
 
-       public Boolean FirstPoint = true;
-       int WLine = 2;
-       Color ColorLine = Color.Black;
+        public Boolean FirstPoint = true;
+        int WLine = 2;
+        Color ColorLine = Color.Black;
 
-        List <Point> AllPoints = new List<Point> ();
+        List<Point> AllPoints = new List<Point>();
         public Line(Color c, int w)
         {
             ColorLine = c;
@@ -31,14 +31,13 @@ namespace GSC_36
             VertexList.Add(NewVertex);
         }
 
-
         public override void Fill(Graphics g, Pen DPen)
         {
             int counterForPoints = 0;
             //4 точки для вспомогательного многоугольника 
             Point AuxPoint1 = new Point();
 
-            Point AuxPoint2=  new Point();
+            Point AuxPoint2 = new Point();
 
             Point AuxPoint3 = new Point();
 
@@ -62,7 +61,7 @@ namespace GSC_36
             else dFy = -dx;
             x = (int)VertexList[0].X; y = (int)VertexList[0].Y;
             F = 0;
-            
+
             if (Math.Abs(dx) >= Math.Abs(dy)) // угол наклона <= 45 градусов
             {
                 do
@@ -71,12 +70,13 @@ namespace GSC_36
                     np.X = x;
                     np.Y = y;
                     AllPoints.Add(np);
-                    
-                    if (counterForPoints == 0) { 
-                    AuxPoint1 = new Point(x, y + WLine / 2);
-                    AuxPoint2 = new Point(x, y - WLine / 2);
-                    counterForPoints++;
-                                    }
+
+                    if (counterForPoints == 0)
+                    {
+                        AuxPoint1 = new Point(x, y + WLine / 2);
+                        AuxPoint2 = new Point(x, y - WLine / 2);
+                        counterForPoints++;
+                    }
 
 
                     g.DrawRectangle(DrawPen, x, y, 1, 1);
@@ -91,9 +91,10 @@ namespace GSC_36
                                   }*/
 
 
-                    if (x == VertexList[1].X) {
-                         AuxPoint4 = new Point(x, y + WLine / 2);
-                         AuxPoint3 = new Point(x, y - WLine / 2);
+                    if (x == VertexList[1].X)
+                    {
+                        AuxPoint4 = new Point(x, y + WLine / 2);
+                        AuxPoint3 = new Point(x, y - WLine / 2);
 
                         break;
                     };
@@ -112,20 +113,21 @@ namespace GSC_36
                     np.X = x;
                     np.Y = y;
                     AllPoints.Add(np);
-                    if (counterForPoints == 0) 
-                    { 
-                    AuxPoint1 = new Point(x - WLine / 2, y);
-                    AuxPoint2 = new Point(x + WLine / 2, y);
+                    if (counterForPoints == 0)
+                    {
+                        AuxPoint1 = new Point(x - WLine / 2, y);
+                        AuxPoint2 = new Point(x + WLine / 2, y);
                         counterForPoints++;
-                }
+                    }
                     g.DrawRectangle(DrawPen, x, y, 1, 1);
 
                     /*                    Xl.Add(new Point(x - WLine, y));
                                         Xr.Add(new Point(x + WLine, y));*/
 
-                    if (y == VertexList[1].Y) {
-                         AuxPoint4 = new Point(x - WLine / 2, y);
-                         AuxPoint3 = new Point(x + WLine / 2, y);
+                    if (y == VertexList[1].Y)
+                    {
+                        AuxPoint4 = new Point(x - WLine / 2, y);
+                        AuxPoint3 = new Point(x + WLine / 2, y);
 
                         break;
                     }
@@ -135,9 +137,6 @@ namespace GSC_36
                     if (Math.Abs(Fy) < Math.Abs(F)) F = Fy;
                     else x = x + Sx;
                 } while (true);
-
-               
-
             }
             //получение многоугольника и его правой и левой  границ для ТМО
             auxilVertexLixtForTMO.Add(AuxPoint1);
@@ -217,6 +216,7 @@ namespace GSC_36
             //переделаем вычисления с испольованием матрицы преобразования
             // создадим матрицы - многомерные массивы, с страница 49 лекций
             //матрица исходных координат
+            MatrixCalc calc = new MatrixCalc();
             double[,] matrixC = new double[1, 3];
             //матрица преобразований для перемещения
             double[,] matrixW = new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { dx, dy, 1 } };
@@ -232,22 +232,10 @@ namespace GSC_36
 
                 matrixCresul = new double[1, 3];
 
-                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
-                for (int m = 0; m < matrixCresul.GetLength(0); m++)
-                {
-                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
-                    {
-                        for (int j = 0; j < matrixW.GetLength(1); j++)
-                        {
-                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
-                        }
-                    }
-                }
+                matrixCresul = calc.MatrixMult(matrixC, matrixW);
                 newVertexList.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
-
             VertexList = newVertexList;
-
         }
 
 
@@ -265,27 +253,74 @@ namespace GSC_36
         {
 
 
-            PointF fP = new PointF();
+            //PointF fP = new PointF();
+            //for (int i = 0; i < VertexList.Count(); i++)
+            //{
+            //    fP.Y = VertexList[i].Y - dy; ;
+            //    fP.X = VertexList[i].X - dx;
+            //    VertexList[i] = fP;
+            //}
+
+            //for (int i = 0; i < VertexList.Count(); i++)
+            //{
+            //    fP.Y = -VertexList[i].Y;
+            //    fP.X = -VertexList[i].X;
+            //    VertexList[i] = fP;
+            //}
+
+            //for (int i = 0; i < VertexList.Count(); i++)
+            //{
+            //    fP.Y = VertexList[i].Y + dy;
+            //    fP.X = VertexList[i].X + dx;
+            //    VertexList[i] = fP;
+            //}
+
+            //переделаем вычисления с испольованием матрицы преобразования
+            // создадим матрицы - многомерные массивы, с страница 49 лекций
+            //матрица исходных координат
+            double[,] matrixC = new double[1, 3];
+            //матрица преобразований.
+            double[,] matrixW = new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { -dx, -dy, 1 } };
+            //матрица новых координат, после преобразования
+            double[,] matrixCresul = new double[1, 3];
+
+            List<PointF> newVertexList = new List<PointF>();
+
+            MatrixCalc calc = new MatrixCalc();
             for (int i = 0; i < VertexList.Count(); i++)
             {
-                fP.Y = VertexList[i].Y - dy; ;
-                fP.X = VertexList[i].X - dx;
-                VertexList[i] = fP;
+                matrixC = new double[,] { { VertexList[i].X, VertexList[i].Y, 1 } };
+
+                matrixCresul = new double[1, 3];
+                matrixCresul = calc.MatrixMult(matrixC, matrixW);
+                newVertexList.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
+            }
+            //матрица преобразований для отражения 
+            matrixW = new double[,] { { -1, 0, 0 }, { 0, -1, 0 }, { 0, 0, 1 } };
+            List<PointF> newVertexList2 = new List<PointF>();
+            for (int i = 0; i < newVertexList.Count(); i++)
+            {
+                matrixC = new double[,] { { newVertexList[i].X, newVertexList[i].Y, 1 } };
+
+                matrixCresul = new double[1, 3];
+                matrixCresul = calc.MatrixMult(matrixC, matrixW);
+                newVertexList2.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
+            }
+            //матрица преобразований для перемещения для компенсации первого перемещения
+            matrixW = new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { +dx, +dy, 1 } };
+
+            List<PointF> newVertexList3 = new List<PointF>();
+            for (int i = 0; i < newVertexList.Count(); i++)
+            {
+                matrixC = new double[,] { { newVertexList2[i].X, newVertexList2[i].Y, 1 } };
+
+                matrixCresul = new double[1, 3];
+                matrixCresul = calc.MatrixMult(matrixC, matrixW);
+                newVertexList3.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
 
-            for (int i = 0; i < VertexList.Count(); i++)
-            {
-                fP.Y = -VertexList[i].Y;
-                fP.X = -VertexList[i].X;
-                VertexList[i] = fP;
-            }
+            VertexList = newVertexList3;
 
-            for (int i = 0; i < VertexList.Count(); i++)
-            {
-                fP.Y = VertexList[i].Y + dy;
-                fP.X = VertexList[i].X + dx;
-                VertexList[i] = fP;
-            }
         }
 
         //https://habr.com/ru/post/426387/
@@ -322,54 +357,28 @@ namespace GSC_36
             //матрица новых координат, после преобразования
             double[,] matrixCresul = new double[1, 3];
 
-
             List<PointF> newVertexList = new List<PointF>();
 
+            MatrixCalc calc = new MatrixCalc();
             for (int i = 0; i < VertexList.Count(); i++)
             {
                 matrixC = new double[,] { { VertexList[i].X, VertexList[i].Y, 1 } };
 
                 matrixCresul = new double[1, 3];
-
-                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
-                for (int m = 0; m < matrixCresul.GetLength(0); m++)
-                {
-                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
-                    {
-                        for (int j = 0; j < matrixW.GetLength(1); j++)
-                        {
-                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
-                        }
-                    }
-                }
+                matrixCresul = calc.MatrixMult(matrixC, matrixW);
                 newVertexList.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
-
             //матрица преобразований для отражения относительно Y
-             matrixW = new double[,] { { -1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
-
-
+            matrixW = new double[,] { { -1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
             List<PointF> newVertexList2 = new List<PointF>();
             for (int i = 0; i < newVertexList.Count(); i++)
             {
                 matrixC = new double[,] { { newVertexList[i].X, newVertexList[i].Y, 1 } };
 
                 matrixCresul = new double[1, 3];
-
-                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
-                for (int m = 0; m < matrixCresul.GetLength(0); m++)
-                {
-                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
-                    {
-                        for (int j = 0; j < matrixW.GetLength(1); j++)
-                        {
-                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
-                        }
-                    }
-                }
+                matrixCresul = calc.MatrixMult(matrixC, matrixW);
                 newVertexList2.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
-
             //матрица преобразований для перемещения для компенсации первого перемещения
             matrixW = new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { +dx, 0, 1 } };
 
@@ -379,31 +388,17 @@ namespace GSC_36
                 matrixC = new double[,] { { newVertexList2[i].X, newVertexList2[i].Y, 1 } };
 
                 matrixCresul = new double[1, 3];
-
-                // Произведение матриц. https://habr.com/ru/post/359272/ , https://www.cyberforum.ru/csharp-beginners/thread72083.html
-                for (int m = 0; m < matrixCresul.GetLength(0); m++)
-                {
-                    for (int n = 0; n < matrixCresul.GetLength(1); n++)
-                    {
-                        for (int j = 0; j < matrixW.GetLength(1); j++)
-                        {
-                            matrixCresul[m, n] += matrixW[j, n] * matrixC[m, j];
-                        }
-                    }
-                }
+                matrixCresul = calc.MatrixMult(matrixC, matrixW);
                 newVertexList3.Add(new PointF((float)matrixCresul[0, 0], (float)matrixCresul[0, 1]));
             }
 
-
             VertexList = newVertexList3;
-
-
-
         }
 
         //вращение относительно центра
         public override void Rotate(double ang)
         {
+
             double rad = ang * (Math.PI / 180.0);
             //ищем координаты центра
             double x0 = (VertexList[0].X + VertexList[1].X) / 2.0;
@@ -422,7 +417,6 @@ namespace GSC_36
 
             }
         }
-
         public override void RotateMouse(Graphics g, int x1, int y1, int x2, int y2)
         {
             //  https://stackoverflow.com/questions/1211212/how-to-calculate-an-angle-from-three-points
@@ -438,51 +432,47 @@ namespace GSC_36
 
             Point p0 = new Point((int)x1, (int)y1);
             Point p1 = new Point((int)x2, (int)y2);
-            
-                var p0c = Math.Sqrt(Math.Pow(c.X - p0.X, 2) +
-                                    Math.Pow(c.Y - p0.Y, 2)); // p0->c (b)   
-                var p1c = Math.Sqrt(Math.Pow(c.X - p1.X, 2) +
-                                    Math.Pow(c.Y - p1.Y, 2)); // p1->c (a)
-                var p0p1 = Math.Sqrt(Math.Pow(p1.X - p0.X, 2) +
-                                     Math.Pow(p1.Y - p0.Y, 2)); // p0->p1 (c)
-                double ang = Math.Acos((p1c * p1c + p0c * p0c - p0p1 * p0p1) / (2 * p1c * p0c));
 
-                 double rad = ang; //* (Math.PI / 180.0);
-                g.DrawLine(new Pen(Color.Green), c.X, c.Y, p0.X, p0.Y);
-                g.DrawLine(new Pen(Color.Green), c.X, c.Y, p1.X, p1.Y);
-               // Task.Delay(1500).Wait();
+            var p0c = Math.Sqrt(Math.Pow(c.X - p0.X, 2) +
+                                Math.Pow(c.Y - p0.Y, 2)); // p0->c (b)   
+            var p1c = Math.Sqrt(Math.Pow(c.X - p1.X, 2) +
+                                Math.Pow(c.Y - p1.Y, 2)); // p1->c (a)
+            var p0p1 = Math.Sqrt(Math.Pow(p1.X - p0.X, 2) +
+                                 Math.Pow(p1.Y - p0.Y, 2)); // p0->p1 (c)
+            double ang = Math.Acos((p1c * p1c + p0c * p0c - p0p1 * p0p1) / (2 * p1c * p0c));
+
+            double rad = ang; //* (Math.PI / 180.0);
+            g.DrawLine(new Pen(Color.Green), c.X, c.Y, p0.X, p0.Y);
+            g.DrawLine(new Pen(Color.Green), c.X, c.Y, p1.X, p1.Y);
+            // Task.Delay(1500).Wait();
 
 
-                for (int i = 0; i < VertexList.Count; i++)
-                {
-                    int dx = (int)Math.Round(VertexList[i].X - x0);
-                    int dy = (int)Math.Round(VertexList[i].Y - y0);
+            for (int i = 0; i < VertexList.Count; i++)
+            {
+                int dx = (int)Math.Round(VertexList[i].X - x0);
+                int dy = (int)Math.Round(VertexList[i].Y - y0);
 
-                    double ptX = x0 + (dx * Math.Cos(rad) - dy * Math.Sin(rad));
-                    double ptY = y0 + (dx * Math.Sin(rad) + dy * Math.Cos(rad));
+                double ptX = x0 + (dx * Math.Cos(rad) - dy * Math.Sin(rad));
+                double ptY = y0 + (dx * Math.Sin(rad) + dy * Math.Cos(rad));
 
-                    VertexList[i] = new PointF((int)Math.Round(ptX), (int)Math.Round(ptY));
-
-                }
-            
+                VertexList[i] = new PointF((int)Math.Round(ptX), (int)Math.Round(ptY));
+            }
         }
 
         public override bool ThisPgn(int mX, int mY)
         {
-  
             bool check = false;
-
             foreach (var p in AllPoints)
             {
-                if (Math.Abs(p.X - mX) < 5 && Math.Abs(p.Y - mY)<5 ) {
+                if (Math.Abs(p.X - mX) < 5 && Math.Abs(p.Y - mY) < 5)
+                {
                     check = true;
                     break;
                 }
             }
-
             return check;
         }
 
-      
+
     }
 }
