@@ -34,7 +34,9 @@ namespace GSC_36
 
             Pen DrawPen = new Pen(ColorCurve, WCurve);
             double h0, h1, h2, h3;
-            for (double t = 0; t <= 1; t += 0.001)
+            const double dt05 = 0.001/2.0;
+            
+            for (double t = 0; t <= 1+ dt05; t += 0.001)
             {
                 h0 = 2 * t * t * t - 3 * t * t + 1;
                 h1 = -2 * t * t * t + 3 * t * t;
